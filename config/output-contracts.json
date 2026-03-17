@@ -1,0 +1,113 @@
+{
+  "_comment": "Enforced output formats per command. Eliminates verbose preamble/postamble. Saves 20-40% output tokens.",
+  "contracts": {
+    "plan": {
+      "format": "structured",
+      "schema": {
+        "approach": "1-3 sentences max",
+        "steps": "numbered list, each step = specific file + action",
+        "files_changed": "path → reason, one line each",
+        "risks": "risk → mitigation, one line each",
+        "tests": "list of test cases",
+        "done_when": "acceptance criteria list"
+      },
+      "system_suffix": "Output a plan. No prose introduction. Start directly with ## Plan: [name]. Max 600 tokens.",
+      "forbidden": ["Great question", "Sure!", "Let me", "I'll help", "Of course", "Certainly"]
+    },
+    "review": {
+      "format": "tiered_report",
+      "schema": {
+        "summary": "2 sentences",
+        "blocking": "## 🔴 Blocking — file:line, problem, fix",
+        "warnings": "## 🟡 Warnings — problem, suggestion",
+        "notes": "## 🟢 Notes — bullet points",
+        "good": "## ✅ What's Good — bullet points",
+        "verdict": "one of: APPROVED | APPROVE_WITH_CHANGES | REQUEST_CHANGES"
+      },
+      "system_suffix": "Code review output only. Format: tiered report. No intro sentence. Start with ## Code Review: [filename]. Max 900 tokens.",
+      "forbidden": ["I noticed", "It seems", "You might want to", "Consider"]
+    },
+    "design": {
+      "format": "plan_then_code",
+      "schema": {
+        "design_plan": "╔══ DESIGN PLAN ══╗ box",
+        "approval_gate": "Build with this plan? (yes / change [what])",
+        "on_approval": ["css_variables", "font_import", "react_bits_installs", "component_code"]
+      },
+      "system_suffix": "Design output. Show DESIGN PLAN box first. Wait for approval. On approval: deliver CSS vars, then font, then component code. No placeholders. No TODOs. No lorem ipsum.",
+      "forbidden": ["Here's what I'll create", "I'll build", "Let me create"]
+    },
+    "ship": {
+      "format": "checklist",
+      "schema": {
+        "blocking": "🔴 items that prevent deployment",
+        "warnings": "🟡 items to fix soon after",
+        "passed": "✅ checks that passed",
+        "verdict": "SHIP | HOLD | HOLD_CRITICAL"
+      },
+      "system_suffix": "Pre-flight checklist only. Run all checks. Output tiered checklist. Final line: VERDICT: SHIP/HOLD/HOLD_CRITICAL. Max 1000 tokens.",
+      "forbidden": []
+    },
+    "spawn": {
+      "format": "agent_brief",
+      "schema": {
+        "agent_id": "string",
+        "role": "string",
+        "task": "1 sentence",
+        "owns": "file paths list",
+        "never_touch": "file paths list",
+        "start_with": "first action"
+      },
+      "system_suffix": "Output agent brief as JSON. Max 350 tokens. No explanation.",
+      "forbidden": []
+    },
+    "debug": {
+      "format": "rca_report",
+      "schema": {
+        "symptom": "what the user reported",
+        "root_cause": "actual cause, not symptom",
+        "evidence": "specific code lines",
+        "fix": "exact code change",
+        "prevention": "how to prevent recurrence"
+      },
+      "system_suffix": "Root cause analysis. Find the actual bug, not symptoms. Provide exact fix. Max 700 tokens.",
+      "forbidden": ["It could be", "Maybe", "Perhaps", "Possibly"]
+    },
+    "optimize": {
+      "format": "optimization_report",
+      "schema": {
+        "issues": "ranked by impact: HIGH/MED/LOW",
+        "fix_each": "exact code change per issue",
+        "expected_gain": "metric improvement estimate"
+      },
+      "system_suffix": "Performance optimization. Rank issues by impact. Provide exact code fixes. Max 800 tokens.",
+      "forbidden": []
+    },
+    "test": {
+      "format": "test_file",
+      "schema": {
+        "test_strategy": "2 sentences",
+        "test_file": "complete working test file"
+      },
+      "system_suffix": "Write complete test file. Cover happy path, error paths, edge cases. No TODOs in test file. Max 1000 tokens.",
+      "forbidden": ["You should also test", "Consider adding"]
+    },
+    "docs": {
+      "format": "markdown_doc",
+      "system_suffix": "Write complete documentation. Clear headers. Code examples for every concept. Max 800 tokens.",
+      "forbidden": []
+    },
+    "refactor": {
+      "format": "refactor_plan_then_code",
+      "schema": {
+        "what_changes": "bullet list",
+        "what_stays": "bullet list",
+        "risk": "LOW/MEDIUM/HIGH + reason",
+        "approval_gate": "Refactor with this plan? (yes / adjust [what])",
+        "on_approval": "complete refactored code"
+      },
+      "system_suffix": "Refactor plan first. Wait for approval. Then deliver complete refactored code. No partial snippets. Max 1200 tokens.",
+      "forbidden": []
+    }
+  }
+}
