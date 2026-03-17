@@ -1,5 +1,10 @@
 # APEX — AI Engineering OS  v4.0.0
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![Python 3.8+](https://img.shields.io/badge/python-3.8+-green.svg)](https://www.python.org/downloads/)
+[![Bash](https://img.shields.io/badge/scripting-bash-lightgrey.svg)]()
+[![Claude Code](https://img.shields.io/badge/Powered%20by-Claude%20Code-purple.svg)]()
+
 The first AI engineering system that **learns from your project**, **improves from your corrections**, and gets **measurably better every week you use it.**
 
 Every other tool (Cursor, Copilot, Devin, all the Claude plugins) is stateless — every session is session one. APEX accumulates project knowledge across sessions through a temporal fact store, trajectory replay, and explicit preference learning. It enforces quality at every stage, not just generation. It tracks whether it's actually improving your engineering velocity via DORA metrics.
@@ -222,4 +227,20 @@ Optional enhancements:
 │   ├── plans/       # plan template cache
 │   └── responses/   # response cache
 └── worktrees-meta/  # agent metadata
+```
+
+## 👨‍💻 About the Architect
+```
+Built by Tushar Rohilla to solve the token bloat, context loss, and API hallucination issues inherent in modern LLM coding workflows. APEX wraps raw LLM generation in a deterministic, CI/CD-enforcing pipeline.
+```
+## 🔗 View Portfolio & More Projects: tushar-rohilla.vercel.app
+
+## 🤝 Contributing
+```
+Pull requests are welcome! If you are proposing a major change to the semantic caching engine or the JSON-lines temporal schemas, please open an issue first to discuss what you would like to change.
+```
+
+## 📄 License
+```
+MIT
 ```
