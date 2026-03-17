@@ -233,7 +233,10 @@ Optional enhancements:
 ```
 Built by Tushar Rohilla to solve the token bloat, context loss, and API hallucination issues inherent in modern LLM coding workflows. APEX wraps raw LLM generation in a deterministic, CI/CD-enforcing pipeline.
 ```
-## 🔗 View Portfolio & More Projects: tushar-rohilla.vercel.app
+## 🔗 View Portfolio & More Projects: 
+```
+tushar-rohilla.vercel.app
+```
 
 ## 🤝 Contributing
 ```
