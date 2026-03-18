@@ -1,4 +1,4 @@
-# APEX — AI Engineering OS  v4.0.0
+# APEX - AI Engineering OS  v4.0.0
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-green.svg)](https://www.python.org/downloads/)
@@ -7,7 +7,7 @@
 
 The first AI engineering system that **learns from your project**, **improves from your corrections**, and gets **measurably better every week you use it.**
 
-Every other tool (Cursor, Copilot, Devin, all the Claude plugins) is stateless — every session is session one. APEX accumulates project knowledge across sessions through a temporal fact store, trajectory replay, and explicit preference learning. It enforces quality at every stage, not just generation. It tracks whether it's actually improving your engineering velocity via DORA metrics.
+Every other tool (Cursor, Copilot, Devin, all the Claude plugins) is stateless: every session is session one. APEX accumulates project knowledge across sessions through a temporal fact store, trajectory replay, and explicit preference learning. It enforces quality at every stage, not just generation. It tracks whether it's actually improving your engineering velocity via DORA metrics.
 
 ---
 
@@ -44,7 +44,7 @@ bash install.sh --update     # update intelligence layer only (safe for upgrades
 ### Dev Loop
 | Command | What it does |
 |---------|-------------|
-| `/brainstorm [feat]` | **Socratic requirements BEFORE planning** — forces decisions upfront |
+| `/brainstorm [feat]` | **Socratic requirements BEFORE planning** - forces decisions upfront |
 | `/ask [question]` | Read-only codebase query with brain context |
 | `/plan [task]` | DAG-structured planning with trajectory replay + brain injection |
 | `/execute` | Batched plan execution with lint/test checkpoints between every step |
@@ -76,7 +76,7 @@ python3 .claude/intelligence/trajectory_store.py query "build auth flow"
 ```
 
 ### Project Brain (`project_brain.py`)
-Temporal fact store with conflict detection. Three categories: constraints, patterns, decisions, corrections. Facts have validity windows — when something changes, old facts are invalidated, not deleted. Auto-syncs from CLAUDE.md and stack profile on `/init`.
+Temporal fact store with conflict detection. Three categories: constraints, patterns, decisions, corrections. Facts have validity windows: when something changes, old facts are invalidated, not deleted. Auto-syncs from CLAUDE.md and stack profile on `/init`.
 
 ```bash
 python3 .claude/intelligence/project_brain.py status
@@ -85,7 +85,7 @@ python3 .claude/intelligence/project_brain.py conflicts
 ```
 
 ### Taste Memory (`taste_memory.py`)
-After `/design`, `/plan`, `/brainstorm`: "Was this on target? (y / partially: reason / n: reason)" — one line. After 10 signals per command, generates a preference profile injected into future outputs. Human review checkpoint every 10 sessions prevents confident wrong learning.
+After `/design`, `/plan`, `/brainstorm`: "Was this on target? (y / partially: reason / n: reason)" one line. After 10 signals per command, generates a preference profile injected into future outputs. Human review checkpoint every 10 sessions prevents confident wrong learning.
 
 ```bash
 python3 .claude/intelligence/taste_memory.py profile
@@ -93,7 +93,7 @@ python3 .claude/intelligence/taste_memory.py review  # approval checkpoint
 ```
 
 ### Evaluator (`evaluator.py`)
-Self-scoring using deterministic rubrics. No extra Claude calls — scores from observable outcomes: developer fixes, plan completion rates, taste signals.
+Self-scoring using deterministic rubrics. No extra Claude calls, scores from observable outcomes: developer fixes, plan completion rates, taste signals.
 
 ```bash
 python3 .claude/intelligence/evaluator.py report
@@ -101,7 +101,7 @@ python3 .claude/intelligence/evaluator.py checkpoint  # human review
 ```
 
 ### Benchmark (`benchmark.py`)
-Statistical command quality: runs a command against 10 variants sampled from your real cache history. Measures consistency. On-demand only — never automatic.
+Statistical command quality: runs a command against 10 variants sampled from your real cache history. Measures consistency. On-demand only and never automatic.
 
 ```bash
 python3 .claude/intelligence/benchmark.py run review
@@ -192,9 +192,9 @@ Every 10 sessions:
 - Windows Git Bash compatible
 
 Optional enhancements:
-- GitHub MCP — enables auto-PR creation in `/ship`, line comments in `/review`
-- Context7 MCP — enables live library doc lookup in `/design`, `/plan`
-- `gitleaks` — enhanced secret scanning in `/ship`
+- GitHub MCP - enables auto-PR creation in `/ship`, line comments in `/review`
+- Context7 MCP - enables live library doc lookup in `/design`, `/plan`
+- `gitleaks` - enhanced secret scanning in `/ship`
 
 ---
 
@@ -204,16 +204,16 @@ Optional enhancements:
 .claude/
 ├── commands/        # 17 slash commands
 ├── intelligence/    # 10 Python modules
-│   ├── cache_manager.py    — semantic plan cache + exact-match fast path
-│   ├── detect_stack.py     — universal stack detector (version-pinned)
-│   ├── token_tracker.py    — cost + time + DORA + budget enforcement
-│   ├── trajectory_store.py — experience replay (NeurIPS 2025)
-│   ├── taste_memory.py     — explicit preference learning
-│   ├── project_brain.py    — temporal fact store (Graphiti-inspired)
-│   ├── evaluator.py        — self-scoring engine
-│   ├── benchmark.py        — statistical command quality
-│   ├── design_system.py    — design token extraction
-│   └── framework_lint.py   — framework-specific linting
+│   ├── cache_manager.py    - semantic plan cache + exact-match fast path
+│   ├── detect_stack.py     - universal stack detector (version-pinned)
+│   ├── token_tracker.py    - cost + time + DORA + budget enforcement
+│   ├── trajectory_store.py - experience replay (NeurIPS 2025)
+│   ├── taste_memory.py     - explicit preference learning
+│   ├── project_brain.py    - temporal fact store (Graphiti-inspired)
+│   ├── evaluator.py        - self-scoring engine
+│   ├── benchmark.py        - statistical command quality
+│   ├── design_system.py    - design token extraction
+│   └── framework_lint.py   - framework-specific linting
 ├── references/      # 23 reference docs (stack-specific guidelines)
 ├── scripts/         # 4 shell scripts (Windows-compatible)
 ├── config/          # 3 config files (with session budget)
