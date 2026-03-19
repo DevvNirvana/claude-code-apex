@@ -1,6 +1,6 @@
 <div align="center">
 
-<h1>APEX — AI Engineering OS</h1>
+<h1>APEX - AI Engineering OS</h1>
 
 <p><strong>The first AI coding system that learns from your project, improves from your corrections, and gets measurably better every week you use it.</strong></p>
 
@@ -45,13 +45,13 @@ unzip claude-orchestrator-apex-v4.1.zip
 bash claude-orchestrator-apex-v4/install.sh
 ```
 
-**Then in Claude Code — one command, everything configured:**
+**Then in Claude Code: one command, everything configured:**
 
 ```
 /setup
 ```
 
-`/setup` detects your stack, auto-generates `CLAUDE.md`, seeds the project brain with your architectural constraints, and gets you to your first productive command in under 2 minutes — on any project, new or existing. No manual config required to start.
+`/setup` detects your stack, auto-generates `CLAUDE.md`, seeds the project brain with your architectural constraints, and gets you to your first productive command in under 2 minutes: on any project, new or existing. No manual config required to start.
 
 ---
 
@@ -205,7 +205,7 @@ The core difference: APEX compounds. Every other tool is stateless.
 ```
 .claude/
 ├── commands/          18 slash commands (including /setup)
-├── intelligence/      11 Python modules — all local, no API calls
+├── intelligence/      11 Python modules: all local, no API calls
 │   ├── generate_claude_md.py   Auto-generates CLAUDE.md from your project
 │   ├── project_brain.py        Temporal fact store with conflict detection
 │   ├── trajectory_store.py     Experience replay (NeurIPS 2025)
@@ -220,7 +220,7 @@ The core difference: APEX compounds. Every other tool is stateless.
 ├── references/        23 reference docs (stack-specific patterns)
 ├── scripts/           4 shell scripts (Windows-compatible)
 ├── config/            3 config files
-├── brain/             facts.jsonl — grows with your project
+├── brain/             facts.jsonl, grows with your project
 └── memory/            trajectories/, taste signals, benchmarks
 ```
 
@@ -241,16 +241,16 @@ Optional: GitHub MCP (auto-PR in `/ship`), `gitleaks` (enhanced secret scanning)
 
 ## 🗺️ Roadmap
 
-- **v4.2** — Parallel `/review` subprocess harness (45s instead of 4min)
-- **v4.3** — Optional sentence-transformers for 85% semantic similarity
-- **v5.0** — Team intelligence: shared brain, averaged taste profiles
-- **v5.1** — CI/CD: APEX pre-flight as GitHub Actions gate on every PR
+- **v4.2** - Parallel `/review` subprocess harness (45s instead of 4min)
+- **v4.3** - Optional sentence-transformers for 85% semantic similarity
+- **v5.0** - Team intelligence: shared brain, averaged taste profiles
+- **v5.1** - CI/CD: APEX pre-flight as GitHub Actions gate on every PR
 
 ---
 
 ## 📄 License
 
-MIT — use it, modify it, build on it.
+MIT: use it, modify it, build on it.
 
 ---
 
