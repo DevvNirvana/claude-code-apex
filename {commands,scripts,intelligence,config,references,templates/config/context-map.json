@@ -1,0 +1,189 @@
+{
+  "_comment": "Controls which CLAUDE.md sections inject per command. Reduces token waste 60-75%.",
+  "_sections": {
+    "project": "Project name, description, core purpose",
+    "commands": "npm run dev/build/test/lint commands",
+    "stack": "Tech stack quick reference",
+    "architecture": "File structure and module boundaries",
+    "conventions": "Critical conventions and patterns",
+    "rules": "Hard DO NOT rules",
+    "pattern": "Good pattern example",
+    "docs": "Links to docs/PRD.md, DESIGN_DOC.md, etc"
+  },
+  "commands": {
+    "plan": {
+      "sections": [
+        "project",
+        "stack",
+        "architecture",
+        "docs"
+      ],
+      "load_files": [
+        "docs/PRD.md",
+        "docs/DESIGN_DOC.md",
+        "TODO.md"
+      ],
+      "max_output_tokens": 600,
+      "output_format": "structured_plan_json",
+      "use_cache": true,
+      "cache_ttl_hours": 24,
+      "compression": "medium"
+    },
+    "review": {
+      "sections": [
+        "project",
+        "stack",
+        "conventions",
+        "rules",
+        "pattern"
+      ],
+      "load_files": [
+        "docs/TECH_STACK.md"
+      ],
+      "max_output_tokens": 900,
+      "output_format": "review_report",
+      "use_cache": false,
+      "batch_enabled": true,
+      "compression": "high"
+    },
+    "design": {
+      "sections": [
+        "project",
+        "stack",
+        "architecture",
+        "conventions"
+      ],
+      "load_files": [
+        "docs/DESIGN_DOC.md",
+        "docs/TECH_STACK.md"
+      ],
+      "max_output_tokens": 1400,
+      "output_format": "design_plan_then_code",
+      "use_cache": false,
+      "compression": "low"
+    },
+    "ship": {
+      "sections": [
+        "project",
+        "stack",
+        "commands",
+        "conventions",
+        "rules",
+        "docs"
+      ],
+      "load_files": [
+        "docs/PRD.md",
+        "docs/DESIGN_DOC.md",
+        "TODO.md"
+      ],
+      "max_output_tokens": 1000,
+      "output_format": "checklist_report",
+      "use_cache": false,
+      "compression": "medium"
+    },
+    "spawn": {
+      "sections": [
+        "project",
+        "stack",
+        "architecture"
+      ],
+      "load_files": [
+        "TODO.md"
+      ],
+      "max_output_tokens": 350,
+      "output_format": "agent_brief",
+      "use_cache": true,
+      "cache_ttl_hours": 48,
+      "compression": "high"
+    },
+    "debug": {
+      "sections": [
+        "project",
+        "stack",
+        "conventions",
+        "rules"
+      ],
+      "load_files": [
+        "docs/DESIGN_DOC.md"
+      ],
+      "max_output_tokens": 700,
+      "output_format": "rca_report",
+      "use_cache": false,
+      "compression": "medium"
+    },
+    "optimize": {
+      "sections": [
+        "project",
+        "stack",
+        "conventions"
+      ],
+      "load_files": [
+        "docs/TECH_STACK.md"
+      ],
+      "max_output_tokens": 800,
+      "output_format": "optimization_report",
+      "use_cache": false,
+      "compression": "medium"
+    },
+    "test": {
+      "sections": [
+        "project",
+        "stack",
+        "conventions",
+        "pattern"
+      ],
+      "load_files": [
+        "docs/TECH_STACK.md"
+      ],
+      "max_output_tokens": 1000,
+      "output_format": "test_file",
+      "use_cache": false,
+      "compression": "low"
+    },
+    "docs": {
+      "sections": [
+        "project",
+        "stack",
+        "architecture",
+        "conventions"
+      ],
+      "load_files": [],
+      "max_output_tokens": 800,
+      "output_format": "markdown_doc",
+      "use_cache": true,
+      "cache_ttl_hours": 168,
+      "compression": "medium"
+    },
+    "refactor": {
+      "sections": [
+        "project",
+        "stack",
+        "conventions",
+        "rules",
+        "pattern"
+      ],
+      "load_files": [
+        "docs/TECH_STACK.md",
+        "docs/DESIGN_DOC.md"
+      ],
+      "max_output_tokens": 1200,
+      "output_format": "refactor_plan_then_code",
+      "use_cache": false,
+      "compression": "medium"
+    },
+    "init": {
+      "sections": [
+        "all"
+      ],
+      "load_files": [],
+      "max_output_tokens": 500,
+      "output_format": "setup_checklist",
+      "use_cache": false,
+      "compression": "none"
+    }
+  },
+  "global_compression_prompt": "Be concise. No preamble. No closing summary. No 'Great question!' or similar. Structured output only. Code blocks for all code. Bullet points over prose.",
+  "cache_similarity_threshold": 0.75,
+  "plan_template_similarity_threshold": 0.55,
+  "_thresholds_note": "These mirror cache-config.json similarity_thresholds. Source of truth is cache_manager.py constants."
+}

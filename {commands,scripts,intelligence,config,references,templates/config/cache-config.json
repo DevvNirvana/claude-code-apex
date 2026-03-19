@@ -1,0 +1,127 @@
+{
+  "_comment": "Cache configuration for plan cache + response cache.",
+  "_thresholds_note": "similarity_thresholds values are the LIVE values read by cache_manager.py. Edit plan/response here to change behaviour. plan_cache.similarity_threshold and response_cache.similarity_threshold below are kept in sync for documentation only.",
+  "plan_cache": {
+    "enabled": true,
+    "directory": ".claude/cache/plans",
+    "similarity_threshold": 0.55,
+    "max_entries": 200,
+    "ttl_hours": 168,
+    "task_type_patterns": {
+      "page_build": [
+        "build.*page",
+        "create.*page",
+        "add.*page",
+        "new.*page"
+      ],
+      "component_build": [
+        "build.*component",
+        "create.*component",
+        "add.*component"
+      ],
+      "api_endpoint": [
+        "api.*endpoint",
+        "create.*route",
+        "add.*endpoint",
+        "rest.*api"
+      ],
+      "auth_flow": [
+        "auth",
+        "login",
+        "signup",
+        "authentication",
+        "oauth"
+      ],
+      "data_model": [
+        "schema",
+        "model",
+        "database",
+        "migration",
+        "entity"
+      ],
+      "feature_build": [
+        "feature",
+        "implement",
+        "add.*feature"
+      ],
+      "refactor": [
+        "refactor",
+        "restructure",
+        "reorganize",
+        "clean up"
+      ],
+      "optimization": [
+        "optimize",
+        "performance",
+        "speed up",
+        "reduce bundle"
+      ],
+      "testing": [
+        "test",
+        "spec",
+        "coverage",
+        "unit test",
+        "integration test"
+      ]
+    }
+  },
+  "response_cache": {
+    "enabled": true,
+    "directory": ".claude/cache/responses",
+    "similarity_threshold": 0.75,
+    "max_entries": 500,
+    "ttl_hours": 72,
+    "cacheable_commands": [
+      "plan",
+      "docs",
+      "spawn"
+    ],
+    "never_cache": [
+      "review",
+      "ship",
+      "debug"
+    ],
+    "invalidate_on_file_change": true,
+    "invalidation_watch": [
+      "src/**/*.ts",
+      "src/**/*.tsx",
+      "app/**/*.ts",
+      "app/**/*.tsx",
+      "package.json",
+      "requirements.txt",
+      "Gemfile",
+      "go.mod",
+      "docs/*.md",
+      "CLAUDE.md"
+    ],
+    "file_change_invalidation": true
+  },
+  "embeddings": {
+    "method": "jaccard_overlap_blend",
+    "comment": "40% Jaccard + 60% Overlap coefficient with synonym normalization. Zero external deps.",
+    "synonym_normalization": true,
+    "ngram_range": [
+      1,
+      1
+    ],
+    "min_score": 0.3
+  },
+  "storage": {
+    "format": "json",
+    "compress": false,
+    "max_cache_size_mb": 50
+  },
+  "similarity_thresholds": {
+    "_note": "These are the LIVE values read by cache_manager.py at runtime.",
+    "plan": 0.55,
+    "response": 0.75
+  },
+  "session_budget": {
+    "_note": "Daily token/cost budget. Set to 0 to disable enforcement.",
+    "soft_warn_usd": 2.0,
+    "hard_halt_usd": 5.0,
+    "soft_warn_tokens": 100000,
+    "hard_halt_tokens": 250000
+  },
+  "_note": "APEX 4.0 cache config. similarity_thresholds are live values read by cache_manager.py."
+}

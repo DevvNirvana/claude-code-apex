@@ -1,0 +1,16 @@
+# APEX runtime data — project-specific, not for the repo
+.claude/cache/
+.claude/memory/
+.claude/brain/
+.claude/logs/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
