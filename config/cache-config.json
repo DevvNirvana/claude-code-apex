@@ -123,5 +123,5 @@
     "soft_warn_tokens": 100000,
     "hard_halt_tokens": 250000
   },
-  "_note": "APEX 4.0 cache config. similarity_thresholds are live values read by cache_manager.py."
+  "_note": "APEX cache config. similarity_thresholds are live values read by cache_manager.py."
 }

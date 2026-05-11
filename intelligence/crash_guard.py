@@ -53,6 +53,14 @@ LAST_CP   = CP_DIR / "last.json"
 ARCHIVE   = CP_DIR / "archive"
 RING_SIZE = 10  # keep last 10 checkpoints
 
+
+def _get_apex_version() -> str:
+    ver_file = APEX_DIR / "config" / "apex-version.json"
+    try:
+        return json.loads(ver_file.read_text()).get("version", "6.0.0")
+    except Exception:
+        return "6.0.0"
+
 GREEN  = "\033[0;32m"; CYAN   = "\033[0;36m"; YELLOW = "\033[1;33m"
 RED    = "\033[0;31m"; BOLD   = "\033[1m";    DIM    = "\033[2m"; RESET = "\033[0m"
 
@@ -134,7 +142,7 @@ def write_checkpoint(command: str, task_summary: str = "", files: list[str] | No
         "todo_snapshot": _read_todo_snapshot(),
         "session_id":    _get_session_id(),
         "safe_to_resume": True,
-        "_apex_version": "5.1",
+        "_apex_version": _get_apex_version(),
     }
 
     # Archive the previous checkpoint (ring buffer)

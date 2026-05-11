@@ -255,7 +255,7 @@ def main():
 
     elif cmd == "compare":
         # Future: A/B comparison between command versions
-        print(f"{DIM}Compare mode coming in v4.1{RESET}")
+        print(f"{DIM}Compare mode not yet implemented.{RESET}")
 
     else:
         print(f"Unknown: {cmd}")

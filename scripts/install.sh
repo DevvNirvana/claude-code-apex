@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# APEX AI Engineering OS — Install Script v4.0.0
+# APEX AI Engineering OS — Install Script v6.0.0
 # Windows Git Bash compatible
 
 set -euo pipefail
@@ -88,9 +88,9 @@ if ! $UPDATE_ONLY; then
     $DRY_RUN || chmod +x "$DEST/scripts/$script" 2>/dev/null || true
   done
 
-  # Config (3)
-  echo ""; echo -e "${BOLD}Config (3)...${RESET}"
-  for cfg in context-map.json output-contracts.json cache-config.json; do
+  # Config (4)
+  echo ""; echo -e "${BOLD}Config (4)...${RESET}"
+  for cfg in context-map.json output-contracts.json cache-config.json apex-version.json; do
     install_file "$PKG_DIR/config/$cfg" "$DEST/config/$cfg"
   done
 
@@ -123,11 +123,14 @@ if ! $DRY_RUN && command -v python3 >/dev/null 2>&1; then
   python3 "$DEST/intelligence/skills_manager.py" install 2>/dev/null ||     echo -e "  ${DIM}(skills install skipped)${RESET}"
 else echo -e "  ${DIM}(skipped)${RESET}"; fi
 
-# Copy reference injection hook template
+# Install hook templates
 echo ""; echo -e "${BOLD}Installing hook templates...${RESET}"
 if ! $DRY_RUN; then
   mkdir -p "$DEST/hooks"
-  cp "$PKG_DIR/templates/hooks/inject-reference.sh" "$DEST/hooks/inject-reference.sh" 2>/dev/null &&     chmod +x "$DEST/hooks/inject-reference.sh" &&     echo -e "  ${GREEN}✓ inject-reference.sh (UserPromptSubmit lazy loader)${RESET}" ||     echo -e "  ${DIM}(hook template not found)${RESET}"
+  cp "$PKG_DIR/templates/hooks/inject-reference.sh" "$DEST/hooks/inject-reference.sh" 2>/dev/null && \
+    chmod +x "$DEST/hooks/inject-reference.sh" && \
+    echo -e "  ${GREEN}✓ inject-reference.sh (UserPromptSubmit lazy loader)${RESET}" || \
+    echo -e "  ${DIM}(inject-reference hook not found)${RESET}"
 fi
 
 # Identity setup (fresh install only)

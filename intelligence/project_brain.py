@@ -16,7 +16,7 @@ Data format: JSON-lines (.jsonl) for append-only storage.
 Each fact: {id, content, category, confidence, source, author,
             created_at, invalidated_at, supersedes, project, tags}
 
-Multi-author: author field supports team mode in v5.
+Multi-author: author field supports team mode in v6.
 
 Usage:
   python3 .claude/intelligence/project_brain.py write <json_file>
