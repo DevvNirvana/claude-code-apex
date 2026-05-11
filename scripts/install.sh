@@ -23,7 +23,7 @@ DEST=".claude"
 
 echo ""
 echo -e "${BOLD}${CYAN}╔══════════════════════════════════════════════════════╗${RESET}"
-echo -e "${BOLD}${CYAN}║   APEX — AI Engineering OS  v4.0.0                   ║${RESET}"
+echo -e "${BOLD}${CYAN}║   APEX — AI Engineering OS  v6.0.0                   ║${RESET}"
 echo -e "${BOLD}${CYAN}╚══════════════════════════════════════════════════════╝${RESET}"
 echo ""
 echo -e "${DIM}  Source: $PKG_DIR${RESET}"
@@ -61,7 +61,8 @@ install_dir() {
 # Commands (17)
 echo -e "${BOLD}Commands (17)...${RESET}"
 for cmd in init setup status ask brainstorm plan execute design spawn test \
-           debug optimize refactor docs review ship rollback compact; do
+           debug optimize refactor docs review ship rollback compact \
+           handoff optimize-context; do
   install_file "$PKG_DIR/commands/$cmd.md" "$DEST/commands/$cmd.md"
 done
 
@@ -69,7 +70,9 @@ done
 echo ""; echo -e "${BOLD}Intelligence (10 modules)...${RESET}"
 for mod in cache_manager detect_stack token_tracker trajectory_store \
            taste_memory project_brain evaluator benchmark \
-           design_system framework_lint generate_claude_md; do
+           design_system framework_lint generate_claude_md \
+           hooks_generator claude_md_optimizer skills_manager \
+           token_intelligence smart_router crash_guard apex_identity update_checker; do
   install_file "$PKG_DIR/intelligence/$mod.py" "$DEST/intelligence/$mod.py"
 done
 
@@ -111,6 +114,29 @@ if ! $UPDATE_ONLY; then
     mkdir -p "$DEST/config" "$DEST/cache/plans" "$DEST/cache/responses" \
              "$DEST/logs" "$DEST/brain" "$DEST/memory/trajectories" \
              "$DEST/memory/benchmarks" "$DEST/worktrees-meta" "worktrees" "docs"
+  fi
+fi
+
+# Install Skills (lazy-loaded commands)
+echo ""; echo -e "${BOLD}Installing Skills (lazy loading)...${RESET}"
+if ! $DRY_RUN && command -v python3 >/dev/null 2>&1; then
+  python3 "$DEST/intelligence/skills_manager.py" install 2>/dev/null ||     echo -e "  ${DIM}(skills install skipped)${RESET}"
+else echo -e "  ${DIM}(skipped)${RESET}"; fi
+
+# Copy reference injection hook template
+echo ""; echo -e "${BOLD}Installing hook templates...${RESET}"
+if ! $DRY_RUN; then
+  mkdir -p "$DEST/hooks"
+  cp "$PKG_DIR/templates/hooks/inject-reference.sh" "$DEST/hooks/inject-reference.sh" 2>/dev/null &&     chmod +x "$DEST/hooks/inject-reference.sh" &&     echo -e "  ${GREEN}✓ inject-reference.sh (UserPromptSubmit lazy loader)${RESET}" ||     echo -e "  ${DIM}(hook template not found)${RESET}"
+fi
+
+# Identity setup (fresh install only)
+if ! $UPDATE_ONLY && ! $DRY_RUN; then
+  echo ""; echo -e "${BOLD}Identity setup...${RESET}"
+  if [ -f "$DEST/intelligence/apex_identity.py" ]; then
+    echo -e "  ${DIM}Your APEX can be named anything — JARVIS, ALFRED, NOVA...${RESET}"
+    echo -e "  ${DIM}Run later: python3 .claude/intelligence/apex_identity.py setup${RESET}"
+    python3 "$DEST/intelligence/apex_identity.py" banner 2>/dev/null || true
   fi
 fi
 

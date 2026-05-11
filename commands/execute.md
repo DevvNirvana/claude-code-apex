@@ -132,3 +132,39 @@ print(json.dumps({
 > **Escalation Rule:** 3 consecutive failures on the same task = architecture review, not a 4th retry.
 > **Never mark done** until lint AND tests pass.
 > **Always update TODO.md** status in real-time — not at the end.
+
+---
+
+## Context Boundary Detection (APEX Session Intelligence)
+
+Before running each task, check if it's semantically unrelated to the previous task:
+
+```python
+# Check if consecutive tasks share context
+python3 .claude/intelligence/cache_manager.py check "[current task]" plan
+```
+
+If the similarity score is below 0.2 between the current task and the last completed task, surface this:
+
+```
+⚠ APEX: Low similarity between tasks (score < 0.2)
+  Previous: [TASK-001 description]
+  Current:  [TASK-003 description]
+  
+  These tasks share little context. Starting a new session for TASK-003 would:
+  - Clear dead context from TASK-001
+  - Cost ~20K tokens but prevent ~40K tokens of context pollution
+  
+  Options:
+  a) Continue in this session (type: continue)
+  b) Run /handoff then start fresh (recommended for unrelated work)
+```
+
+If the user says "continue" — proceed normally.
+If tasks share context (score >= 0.2) — execute without warning.
+
+**Reset turn counter on fresh context:**
+```bash
+echo "0" > .claude/logs/session_turns.txt
+```
+

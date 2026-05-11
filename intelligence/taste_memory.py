@@ -58,7 +58,7 @@ def _atomic_write_json(path: Path, data: dict):
         os.replace(tmp, path)
     except Exception:
         try: os.unlink(tmp)
-        except: pass
+        except Exception: pass
         raise
 
 

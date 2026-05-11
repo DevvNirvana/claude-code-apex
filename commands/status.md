@@ -122,3 +122,55 @@ Recommendations:
 > If checkpoint is due (10+ sessions): flag it.
 > If any doc paths are broken: list the correct paths to fix.
 > **Token Target:** ≤ 600 tokens. Facts only, no narrative.
+
+
+---
+
+## Step 6: Proactive Intelligence (APEX thinks before you ask)
+
+Cross-reference all data sources and surface any of these signals automatically:
+
+```bash
+# Run the full proactive analysis
+python3 .claude/intelligence/token_intelligence.py audit
+python3 .claude/intelligence/project_brain.py conflicts
+```
+
+**Check for these proactively — surface them without being asked:**
+
+**Quality degradation:**
+```python
+# If /review grade dropped more than one letter grade in last 5 sessions → flag it
+# "Your /review quality dropped from A→C over 5 sessions. Something changed."
+```
+
+**Stale plans:**
+```bash
+# If any TASK-ID has been [>] in-progress for more than 3 sessions → surface it  
+grep -c "\[>\]" TODO.md 2>/dev/null || grep -c "\[>\]" docs/AI_TASKS.md 2>/dev/null
+```
+
+**Brain conflicts unresolved:**
+```bash
+python3 .claude/intelligence/project_brain.py conflicts
+```
+If > 0 conflicts: "3 brain conflicts from last week — resolve before planning new features"
+
+**Budget trajectory:**
+If today's cost > 80% of soft warn threshold: "At current rate you'll hit soft limit in ~N more commands"
+
+**Context health alert:**
+```bash
+python3 -c "
+lines = len(open('CLAUDE.md').read().splitlines())
+print(f'CLAUDE.md: {lines} lines')
+if lines > 80: print('WARNING: Over 80 lines — compliance degrades')
+"
+```
+
+**Never seen before tasks:**
+If a task in TODO.md has been there for 5+ sessions with no [>] or [x] status → "TASK-007 has never been started. Is it still relevant?"
+
+---
+
+> **Token target:** ≤ 600 tokens. Facts only, no narrative. Surface the anomalies.

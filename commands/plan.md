@@ -1,5 +1,13 @@
 # /plan — Plan Before Building
 
+
+> **APEX Token Pre-flight:** Before this command runs, APEX checks your token budget:
+> ```bash
+> python3 .claude/intelligence/token_intelligence.py pre-flight plan "[your query]"
+> ```
+> This shows the exact cost breakdown before spending tokens.
+
+
 You are creating a **development plan** for: $ARGUMENTS
 
 Cache-first: check if a similar plan exists before generating a new one.

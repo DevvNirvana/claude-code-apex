@@ -1,5 +1,13 @@
 # /review — Deep Code Review
 
+
+> **APEX Token Pre-flight:** Before this command runs, APEX checks your token budget:
+> ```bash
+> python3 .claude/intelligence/token_intelligence.py pre-flight review "[your query]"
+> ```
+> This shows the exact cost breakdown before spending tokens.
+
+
 You are performing a **deep code review** on: $ARGUMENTS
 
 ---

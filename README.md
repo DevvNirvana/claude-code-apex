@@ -1,263 +1,378 @@
 <div align="center">
 
-<h1>APEX — AI Engineering OS</h1>
+# APEX — AI Engineering OS
 
-<p><strong>The first AI coding system that learns from your project, improves from your corrections, and gets measurably better every week you use it.</strong></p>
+**The most advanced Claude Code engineering framework. Production-grade. Research-backed. Self-improving.**
 
-<p>
-  <a href="https://github.com/DevvNirvana/claude-orchestrator-apex/releases"><img src="https://img.shields.io/github/v/release/DevvNirvana/claude-orchestrator-apex?color=8A2EFF&label=version&style=flat-square" alt="Version"></a>
-  <a href="https://github.com/DevvNirvana/claude-orchestrator-apex/blob/main/LICENSE"><img src="https://img.shields.io/github/license/DevvNirvana/claude-orchestrator-apex?color=00F7FF&style=flat-square" alt="License"></a>
-  <img src="https://img.shields.io/badge/Python-3.8%2B-blue?style=flat-square" alt="Python 3.8+">
-  <img src="https://img.shields.io/badge/Claude%20Code-compatible-blueviolet?style=flat-square" alt="Claude Code">
-  <img src="https://img.shields.io/badge/Windows%20Git%20Bash-supported-green?style=flat-square" alt="Windows">
-</p>
+[![Version](https://img.shields.io/badge/version-6.0.0-blue?style=flat-square)](https://github.com/DevvNirvana/claude-code-apex/releases)
+[![Claude Code](https://img.shields.io/badge/Claude%20Code-required-orange?style=flat-square)](https://code.claude.com)
+[![License](https://img.shields.io/badge/license-MIT-green?style=flat-square)](LICENSE)
+[![Last Updated](https://img.shields.io/badge/updated-May%202026-brightgreen?style=flat-square)]()
 
-<p>
-  <a href="#-quick-start">Quick Start</a> ·
-  <a href="#-why-apex">Why APEX</a> ·
-  <a href="#-the-18-command-system">Commands</a> ·
-  <a href="#-the-intelligence-layer">Intelligence</a> ·
-  <a href="#-stack-support">Stacks</a> ·
-  <a href="#-honest-comparison">Comparison</a>
-</p>
+*"Not just prompts. An operating system for AI-assisted engineering."*
 
 </div>
 
 ---
 
-## The problem every Claude Code user has
+## What Is APEX?
 
-Every session starts from zero. You re-explain your stack. You repeat your conventions. You remind it that you don't use API routes. You paste your architecture again. The model forgets. You repeat.
+APEX transforms Claude Code from a chat interface into a structured engineering OS. It gives Claude persistent memory, self-enforcing rules, proactive intelligence, crash recovery, and token-aware routing — without changing how you work.
 
-By session 50 you've explained the same constraints 50 times. The model on session 50 is exactly as uninformed as it was on session 1. That's not a model problem. That's a systems problem.
+You still type commands. Claude still writes code. But now it **remembers** your project, **enforces** your standards, **warns** you before wasting tokens, and **recovers** automatically if it crashes.
 
-APEX solves it.
+**Named whatever you want.** APEX can be JARVIS, ALFRED, NOVA, or anything else. One config file changes every banner, greeting, and identity across the entire system.
 
 ---
 
-## ⚡ Quick Start
+## Why It Exists
 
-**Install:**
+Claude Code without APEX is brilliant but amnesiac. Every session starts from scratch. Rules get forgotten after 10 messages. There's no token visibility. There's no crash recovery. There's no way to see if quality is degrading over time.
+
+APEX fixes all of this. Permanently.
+
+**Research foundations:**
+- **ETH Zurich arXiv 2602.11988 (Feb 2026):** CLAUDE.md rules have ~60% compliance and vanish after context compaction. Hooks achieve ~90%+ compliance and survive compaction entirely.
+- **ACE arXiv 2510.04618 (ICLR 2026):** Agents that reflect on failures and accumulate structured knowledge improve by +10.6% on benchmarks. APEX implements this via the ACE Reflector and brain delta updates.
+- **Claude Code Skills spec:** Lazy-loaded skills reduce startup token overhead by 91% vs eager command loading.
+
+---
+
+## Feature Map
+
+### 🧠 Persistent Intelligence
+| Feature | What It Does |
+|---|---|
+| **Project Brain** | Stores constraints, patterns, decisions in `.claude/brain/facts.jsonl`. Persists across sessions. Confidence auto-adjusts based on usage. |
+| **Trajectory Store** | Records what you shipped, what patterns worked, what failed. Future sessions read this before planning. |
+| **ACE Reflector** | When something goes wrong and you fix it, auto-extracts the lesson as a `HOLD` trajectory. The system learns from failures. |
+| **Taste Memory** | Learns your aesthetic and engineering preferences from correction patterns. |
+
+### ⚡ Token Intelligence
+| Feature | What It Does |
+|---|---|
+| **Smart Router** | Classifies every task into the minimum context tier needed. Simple lookups: ~300 tokens. Full planning: ~5,500 tokens. 56% average session reduction. |
+| **Token Pre-flight** | Shows exact token breakdown before any command runs. You know the cost before you spend it. |
+| **Budget Enforcement** | Hard blocks commands when daily budget would be exceeded. Configurable warn and halt thresholds. |
+| **Skills Lazy Loading** | Commands only load when needed. 91% startup token reduction (22,276 → 1,900 tokens). |
+| **Reference Injection** | 23 reference docs stay on disk. Only the relevant one fires per message via UserPromptSubmit hook. |
+
+### 🔒 Enforcement (Not Just Suggestions)
+| Feature | What It Does |
+|---|---|
+| **Hooks Generator** | Converts brain constraints into Claude Code hooks. `settings.json` + 5 hook scripts auto-generated. |
+| **Secret Blocker** | PreToolUse hook blocks hardcoded API keys and tokens before any file write. |
+| **Main Branch Guard** | PreToolUse hook blocks direct push to main/master. |
+| **Session Start Re-injection** | Constraints re-injected after every context compaction. Rules survive long sessions. |
+| **Session Pollution Detection** | Warns at turn 15, strong warns at turn 25. Prevents quality degradation from overly long sessions. |
+
+### 🛡️ Crash Recovery
+| Feature | What It Does |
+|---|---|
+| **Crash Guard** | Writes atomic checkpoint before every Write/Edit/Bash. Survives OOM kills. |
+| **Session Registry** | Independent of Claude Code's session index. Survives sessions-index.json corruption. |
+| **Auto-Detection** | `/init` detects crash state automatically. Surfaces git hash, files in flight, in-progress tasks. |
+| **Resume Briefing** | Tells you exactly where you were, what changed, what to do next. |
+
+### 🎯 Proactive Intelligence
+| Feature | What It Does |
+|---|---|
+| **Proactive /status** | Cross-references brain, evaluator, tasks, budget. Surfaces anomalies before you ask. |
+| **Quality Degradation Alert** | Flags when /review grades drop across sessions. |
+| **Stale Task Detection** | Surfaces in-progress tasks that haven't moved in 3+ sessions. |
+| **Brain Conflict Resolution** | Alerts on conflicting facts before you plan new features on bad assumptions. |
+
+### 🎨 Identity & Personalization
+| Feature | What It Does |
+|---|---|
+| **Custom Naming** | Name your APEX anything: JARVIS, ALFRED, NOVA. One config drives every banner. |
+| **Per-Project Identity** | Each project can have a different name and personality. |
+| **Color Schemes** | Cyan, green, yellow, magenta, blue — your terminal, your colors. |
+
+### 🔄 Auto-Update
+| Feature | What It Does |
+|---|---|
+| **Update Checker** | Checks GitHub releases once per 24h. Prompts if newer version available. |
+| **Non-Blocking** | 3-second timeout. Never stalls your session if network is slow. |
+| **Permission Required** | Never auto-installs. Always asks. You stay in control. |
+
+---
+
+## Commands (20)
+
+| Command | Description | Token Tier |
+|---|---|---|
+| `/setup` | Zero-friction first-run. Auto-detects stack, generates CLAUDE.md, seeds brain. | FULL |
+| `/init` | Session start. Crash detection, identity banner, token audit, brain sync. | LIGHT |
+| `/status` | Proactive system dashboard. Surfaces anomalies without being asked. | LIGHT |
+| `/ask` | Read-only codebase query. Minimal context. | MICRO/LIGHT |
+| `/brainstorm` | Socratic requirements. Generates Decision Record before planning. | FULL |
+| `/plan` | DAG-structured planning with trajectory injection. | FULL |
+| `/execute` | Batched task execution with context boundary detection. | FULL |
+| `/design` | Stack-adaptive UI with aesthetic direction phase. | FULL |
+| `/spawn` | Parallel agents in isolated git worktrees. | FULL |
+| `/test` | Framework-specific test generation with TDD enforcement. | STANDARD |
+| `/debug` | Root cause analysis with brain constraint injection. | STANDARD |
+| `/optimize` | Performance profiling and targeted fixes. | STANDARD |
+| `/refactor` | Safe refactoring with impact analysis. | STANDARD |
+| `/docs` | Documentation generation. | STANDARD |
+| `/review` | Multi-perspective deep review against your AI_RULES.md. | FULL |
+| `/ship` | 40-point pre-flight deployment checklist. | FULL |
+| `/rollback` | Emergency rollback via worktree metadata. | LIGHT |
+| `/compact` | Archive completed work and compress stale docs. | LIGHT |
+| `/handoff` | Session context bridge. Creates <400 token briefing for next session. | LIGHT |
+| `/optimize-context` | Full token audit + CLAUDE.md optimization. | LIGHT |
+
+---
+
+## Intelligence Modules (19)
+
+| Module | Purpose |
+|---|---|
+| `smart_router.py` | Token tier classification before every command |
+| `crash_guard.py` | Atomic checkpoints + crash detection |
+| `apex_identity.py` | Custom naming and personalization engine |
+| `update_checker.py` | Auto-update notifications (24h cache) |
+| `token_intelligence.py` | Pre-flight token reports + budget enforcement |
+| `skills_manager.py` | Skills lazy loading (91% startup reduction) |
+| `hooks_generator.py` | Converts brain constraints → Claude Code hooks |
+| `claude_md_optimizer.py` | Research-backed CLAUDE.md trimmer |
+| `generate_claude_md.py` | Auto-generates CLAUDE.md from stack detection |
+| `project_brain.py` | Persistent fact store with confidence delta updates |
+| `trajectory_store.py` | Experience replay + ACE Reflector |
+| `cache_manager.py` | Semantic plan cache with duplicate detection |
+| `token_tracker.py` | Cost tracking, DORA metrics |
+| `detect_stack.py` | 15+ frameworks, version-pinned detection |
+| `evaluator.py` | Self-scoring quality engine |
+| `taste_memory.py` | Developer preference learning |
+| `benchmark.py` | Statistical consistency measurement |
+| `design_system.py` | Design token extraction |
+| `framework_lint.py` | Framework-specific lint rules |
+
+---
+
+## Quick Start (5 minutes)
+
+### Fresh Install
 
 ```bash
+# 1. Download and unzip (folder: claude-orchestrator-apex-v6/)
+unzip ~/Downloads/claude-orchestrator-apex-v6.0-COMPLETE.zip
+
+# 2. Navigate to your project
 cd your-project
-unzip claude-orchestrator-apex-v4.1.zip
-bash claude-orchestrator-apex-v4/install.sh
-```
 
-**Then in Claude Code — one command, everything configured:**
+# 3. Install
+bash ~/claude-orchestrator-apex-v6/install.sh
 
-```
+# 4. Name your APEX (optional but recommended)
+python3 .claude/intelligence/apex_identity.py setup
+
+# 5. Generate enforcement hooks
+python3 .claude/intelligence/hooks_generator.py
+
+# 6. Open Claude Code and run
 /setup
 ```
 
-`/setup` detects your stack, auto-generates `CLAUDE.md`, seeds the project brain with your architectural constraints, and gets you to your first productive command in under 2 minutes — on any project, new or existing. No manual config required to start.
-
----
-
-## 🧠 Why APEX
-
-Every other Claude Code tool is **stateless**. Session 100 is identical to session 1. They add commands, they add agents, but they don't remember anything.
-
-APEX compounds.
-
-```
-Session 1:  APEX knows your stack and hard rules
-Session 5:  APEX has your first successful trajectory stored
-Session 10: APEX knows your preferences for /design and /plan
-Session 20: APEX injects months of real decisions before every command
-Session 50: The gap between APEX and starting fresh is enormous
-```
-
-The underlying model doesn't change. Your accumulated project knowledge does.
-
----
-
-## 🔧 The 18-Command System
-
-Three groups. One mental model.
-
-### Meta / System
-| Command | What it does |
-|---|---|
-| `/setup` | **Zero-friction onboarding.** Auto-generates CLAUDE.md, seeds brain, warms cache. Works on any project. |
-| `/init` | Start of every session. Validates context, syncs brain, confirms budget. |
-| `/status` | Full system dashboard: brain health, cache stats, quality grades, DORA metrics. |
-| `/compact` | Archive completed work, compress stale docs. |
-| `/benchmark` | Statistical quality measurement for any command. |
-
-### Dev Loop
-| Command | What it does |
-|---|---|
-| `/brainstorm` | Socratic requirements before any code. Generates Decision Record. |
-| `/ask` | Read-only codebase query with brain context. |
-| `/plan` | DAG-structured planning with trajectory injection. |
-| `/execute` | Batched plan execution with lint+test between every step. |
-| `/design` | Stack-adaptive UI with intentional aesthetic direction. |
-| `/spawn` | Parallel agents in isolated git worktrees. |
-| `/test` | Framework-specific test generation. |
-| `/debug` | Root cause analysis. |
-| `/optimize` | Performance profiling and targeted fixes. |
-| `/refactor` | Safe refactoring with impact analysis. |
-| `/docs` | Documentation generation. |
-
-### Quality Gates
-| Command | What it does |
-|---|---|
-| `/review` | Multi-perspective deep review. Reads your AI_RULES.md, not just generic checks. |
-| `/ship` | 40-point pre-flight before any deploy. Runs your actual build and lint commands. |
-| `/rollback` | Emergency rollback using worktree metadata. |
-
----
-
-## 🔬 The Intelligence Layer
-
-Five Python modules that run locally, store persistently, and compound across sessions.
-
-### Project Brain
-A temporal fact store with conflict detection. When you migrate from Prisma to Drizzle, the old fact gets invalidated and the new one takes its place automatically. No stale advice.
+### Upgrade from Any Previous Version
 
 ```bash
-python3 .claude/intelligence/project_brain.py status
-# Total facts: 19  |  Valid: 19  |  Constraints: 9  |  Patterns: 6
+cd your-project
+
+# Backup your intelligence data
+mkdir -p .apex-backup
+cp -r .claude/brain .claude/memory .apex-backup/
+cp CLAUDE.md .apex-backup/
+
+# Update system files only (brain + memory untouched)
+bash ~/claude-orchestrator-apex-v6/install.sh --update
+
+# Regenerate hooks (includes new crash-checkpoint + session-pollution)
+python3 .claude/intelligence/hooks_generator.py --force
+
+# Set your version
+python3 .claude/intelligence/update_checker.py set 6.0.0
+
+# Verify
+python3 .claude/intelligence/token_intelligence.py audit
+/init
 ```
-
-### Trajectory Store
-Based on NeurIPS 2025 research on self-generated in-context examples. Every successful session gets stored. When a similar task comes up, APEX injects your past wins before generating a single line of code.
-
-```bash
-python3 .claude/intelligence/trajectory_store.py query "build auth flow"
-# → returns your previous auth implementation: what worked, what to avoid
-```
-
-### Taste Memory
-Explicit developer preference learning. After every `/design` and `/plan`, one question: was this on target? After 10 sessions, APEX knows you prefer functional components, dark backgrounds, queries in a central file. It stops suggesting the things you always change.
-
-### Evaluator
-Deterministic self-scoring. Grades command quality from observable outcomes. Trends over time. Flags degradation before it becomes a habit. No additional API calls.
-
-### Semantic Plan Cache
-Exact-match fast path plus synonym normalization. "Build auth flow" hits "create login system." 30–50% cost reduction at typical usage, growing over time.
 
 ---
 
-## 🚀 Auto-Setup: No Config Required
+## How Token Routing Works
 
-The biggest friction in AI tooling is configuration. APEX removes it.
-
-After install, run `/setup` in Claude Code:
+Every command is classified before a single token loads:
 
 ```
-✓ Language:   TypeScript
-✓ Framework:  Next.js v15.2 (app-router)
-✓ Database:   Supabase/PostgreSQL
-✓ Commands:   npm run dev / build / lint
+User: "where is the auth code?"
+→ Smart Router: MICRO tier (~300 tokens)
+→ Skips: CLAUDE.md, brain, skill body, trajectories
+→ Cost: ~$0.001
 
-→ Generating CLAUDE.md...
-→ Seeding brain with 7 architectural constraints...
-→ Warming plan cache from TODO.md (12 templates)...
-→ Ready. Run /brainstorm or /plan to start building.
+User: /plan "build the user authentication system"
+→ Smart Router: FULL tier (~5,500 tokens)
+→ Loads: Everything — CLAUDE.md, brain, trajectories, taste, skill body
+→ Cost: ~$0.017
 ```
 
-Three things still need your input (takes 2 minutes): the project description, 2–3 project-specific conventions, and verifying your Hard Rules start with "Never" for brain sync. Everything else is automatic.
+**Token tier breakdown:**
 
----
-
-## 🏗️ Stack Support
-
-| Ecosystem | Frameworks |
-|---|---|
-| **JavaScript / TypeScript** | Next.js (App + Pages Router), React, Vue, Nuxt, Svelte, SvelteKit, Remix, Astro |
-| **Node.js Backend** | Express, Fastify, Hono |
-| **Python** | Django, FastAPI, Flask |
-| **Ruby** | Rails, Sinatra |
-| **Go** | Standard library + gin, echo, fiber, chi |
-| **PHP** | Laravel, Symfony |
-| **Mobile** | Flutter, React Native, SwiftUI |
-
-Version-pinned detection: APEX knows the difference between Next.js 13 and Next.js 15 because they are fundamentally different codebases.
-
----
-
-## 📊 Honest Comparison
-
-| | Vanilla Claude Code | oh-my-claudecode | **APEX** |
+| Tier | Tokens | Cost | When Used |
 |---|---|---|---|
-| Persistent project memory | ❌ | ❌ | ✅ |
-| Learns your preferences | ❌ | ❌ | ✅ |
-| Trajectory replay | ❌ | ❌ | ✅ |
-| Auto-generates CLAUDE.md | ❌ | ❌ | ✅ |
-| Self-scoring quality system | ❌ | ❌ | ✅ |
-| Version-pinned stack detection | ❌ | ❌ | ✅ |
-| 40-point pre-flight checklist | ❌ | ❌ | ✅ |
-| DORA metrics tracking | ❌ | ❌ | ✅ |
-| Multi-agent worktrees | ❌ | ✅ | ✅ |
-| Gets better over time | ❌ | ❌ | ✅ |
-| Windows Git Bash | ❌ | ❌ | ✅ |
-| Python 3.8+ compatible | — | — | ✅ |
+| MICRO | ~300 | $0.001 | Lookups, simple questions, typos |
+| LIGHT | ~900 | $0.003 | Quick fixes, explanations, status checks |
+| STANDARD | ~2,800 | $0.008 | Debug, test, refactor, optimize |
+| FULL | ~5,500 | $0.017 | Plan, design, review, execute, ship |
 
-The core difference: APEX compounds. Every other tool is stateless.
+*Based on Claude Sonnet 4.6 pricing as of May 2026. Simple tasks stay simple.*
 
 ---
 
-## 📦 What Gets Installed
+## How Crash Recovery Works
+
+**Without APEX:** Claude Code crashes → `sessions-index.json` may be corrupted → `--resume` fails → you start from scratch.
+
+**With APEX:**
+1. `crash-checkpoint.sh` fires before every Write/Edit/Bash (PreToolUse hook)
+2. Writes `.claude/checkpoints/last.json` atomically (survives OOM kill)
+3. On next `/init`, `crash_guard.py detect` runs automatically
+4. If crash detected, APEX surfaces:
+   - What command was running
+   - Which git hash and branch
+   - Which files were being modified
+   - Which tasks were in progress
+   - The Claude Code session ID (if available for `--resume`)
+
+---
+
+## Configuring Your Budget
+
+Edit `.claude/config/cache-config.json`:
+
+```json
+{
+  "session_budget": {
+    "soft_warn_usd": 3.00,
+    "hard_halt_usd": 5.00
+  }
+}
+```
+
+`soft_warn_usd` — warns before the command but allows it.
+`hard_halt_usd` — blocks the command entirely. Zero tokens spent.
+
+---
+
+## Naming Your APEX
+
+```bash
+python3 .claude/intelligence/apex_identity.py setup
+```
+
+Interactive wizard. Set name, tagline, greeting, color. Takes 30 seconds.
+
+Or set directly:
+```bash
+python3 .claude/intelligence/apex_identity.py set name JARVIS
+python3 .claude/intelligence/apex_identity.py set greeting "Ready, boss."
+python3 .claude/intelligence/apex_identity.py set color_scheme cyan
+```
+
+Every banner, hook output, and CLAUDE.md identity line updates immediately.
+
+---
+
+## What Gets Preserved on Upgrade
+
+```
+PRESERVED (your data — never touched):     REPLACED (system files — safe to overwrite):
+  .claude/brain/facts.jsonl                  .claude/commands/
+  .claude/memory/trajectories/               .claude/intelligence/
+  .claude/memory/taste_profile.json          .claude/references/
+  .claude/memory/evaluations.jsonl           .claude/hooks/
+  .claude/identity.json                      .claude/config/
+  CLAUDE.md                                  install.sh
+  docs/ (all your docs)                      README.md (this file)
+```
+
+---
+
+## Comparison
+
+| Feature | Vanilla Claude Code | APEX |
+|---|---|---|
+| Memory across sessions | ❌ | ✅ Persistent brain |
+| Rule enforcement | 60% compliance | 90%+ via hooks |
+| Token visibility | ❌ | ✅ Pre-flight every command |
+| Crash recovery | Fragile | ✅ Atomic checkpoints |
+| Simple task token cost | 5,500 tokens | 300 tokens (MICRO tier) |
+| Custom identity | ❌ | ✅ Full personalization |
+| Auto-updates | ❌ | ✅ Daily check, opt-in |
+| Self-improving | ❌ | ✅ ACE Reflector + brain delta |
+| Session pollution alerts | ❌ | ✅ Warns at turn 15/25 |
+
+---
+
+## Architecture
 
 ```
 .claude/
-├── commands/          18 slash commands (including /setup)
-├── intelligence/      11 Python modules — all local, no API calls
-│   ├── generate_claude_md.py   Auto-generates CLAUDE.md from your project
-│   ├── project_brain.py        Temporal fact store with conflict detection
-│   ├── trajectory_store.py     Experience replay (NeurIPS 2025)
-│   ├── taste_memory.py         Developer preference learning
-│   ├── evaluator.py            Self-scoring quality engine
-│   ├── benchmark.py            Statistical consistency measurement
-│   ├── cache_manager.py        Semantic plan cache
-│   ├── detect_stack.py         15+ frameworks, version-pinned
-│   ├── token_tracker.py        Cost + time + DORA metrics
-│   ├── design_system.py        Design token extraction
-│   └── framework_lint.py       Framework-specific lint rules
-├── references/        23 reference docs (stack-specific patterns)
-├── scripts/           4 shell scripts (Windows-compatible)
-├── config/            3 config files
-├── brain/             facts.jsonl — grows with your project
-└── memory/            trajectories/, taste signals, benchmarks
+├── commands/          20 lazy-loaded Skills (YAML frontmatter)
+├── intelligence/      19 Python modules (the engine)
+├── hooks/             Auto-generated enforcement scripts
+│   ├── session-start.sh       Re-injects constraints after compaction
+│   ├── crash-checkpoint.sh    Atomic checkpoint before every edit
+│   ├── inject-reference.sh    Lazy reference injection (UserPromptSubmit)
+│   ├── session-pollution.sh   Warns at turn 15/25
+│   ├── check-secrets.sh       Blocks hardcoded credentials
+│   ├── protect-main.sh        Blocks direct push to main
+│   └── session-end.sh         Docs reminder + clean shutdown
+├── brain/             facts.jsonl — persists across sessions
+├── memory/            trajectories/, taste, evaluations
+├── checkpoints/       Crash recovery state
+├── references/        23 lazy-loaded reference docs
+├── skills/            Auto-generated from commands
+└── config/            Stack profile, budget, version
 ```
 
-Nothing phones home. All intelligence runs locally via Python. No subscriptions. No accounts.
+---
+
+## Changelog
+
+### v6.0.0 — May 10, 2026
+- **NEW:** Smart Router — 4-tier token classification. 56% average session reduction.
+- **NEW:** Crash Guard — atomic checkpoints, auto crash detection on `/init`.
+- **NEW:** APEX Identity — custom naming (JARVIS, ALFRED, NOVA, anything).
+- **NEW:** Auto-update checker — daily GitHub check, non-blocking, opt-in.
+- **NEW:** Budget enforcement — hard block before tokens are spent.
+
+### v5.0.0 — April 2026
+- Skills lazy loading — 91% startup token reduction.
+- UserPromptSubmit hook — reference injection (30,364 → 2,000 tokens).
+- ACE Reflector — failure lessons auto-extracted.
+- Brain delta updates — confidence auto-adjusts from usage.
+- Session pollution detection — turn counter with warnings.
+- `/handoff` command — session context bridge.
+
+### v4.3.0 — March 2026
+- Hooks generator — brain constraints → enforcement hooks.
+- CLAUDE.md optimizer — removes arch trees, generic advice.
+- Selective brain injection — 3-tier context loading.
 
 ---
 
-## ⚙️ Requirements
+## License
 
-- **Claude Code** (claude.ai/code)
-- **Python 3.8+**
-- **Git 2.20+**
-- **Bash** (macOS, Linux, Windows Git Bash, WSL2)
-
-Optional: GitHub MCP (auto-PR in `/ship`), `gitleaks` (enhanced secret scanning)
-
----
-
-## 🗺️ Roadmap
-
-- **v4.2** — Parallel `/review` subprocess harness (45s instead of 4min)
-- **v4.3** — Optional sentence-transformers for 85% semantic similarity
-- **v5.0** — Team intelligence: shared brain, averaged taste profiles
-- **v5.1** — CI/CD: APEX pre-flight as GitHub Actions gate on every PR
-
----
-
-## 📄 License
-
-MIT — use it, modify it, build on it.
+MIT — Use it, fork it, build on it.
 
 ---
 
 <div align="center">
 
-**Built by [DevvNirvana](https://github.com/DevvNirvana)**
+**Built on research. Designed for engineers who ship.**
 
-If APEX saves you time, a ⭐ helps other developers find it.
+[GitHub](https://github.com/DevvNirvana/claude-code-apex) · [Releases](https://github.com/DevvNirvana/claude-code-apex/releases) · [Issues](https://github.com/DevvNirvana/claude-code-apex/issues)
 
 </div>

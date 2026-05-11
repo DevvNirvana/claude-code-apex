@@ -21,7 +21,6 @@ from __future__ import annotations
 import json, sys, hashlib, os, tempfile
 from pathlib import Path
 from datetime import datetime, timezone
-from typing import Optional
 
 ROOT    = Path.cwd()
 STORE   = ROOT / ".claude" / "memory" / "trajectories"
@@ -77,7 +76,7 @@ def _atomic_write(path: Path, data: dict):
         os.replace(tmp, path)
     except Exception:
         try: os.unlink(tmp)
-        except: pass
+        except Exception: pass
         raise
 
 def ensure_dirs():
@@ -263,7 +262,7 @@ def show_stats():
             t = json.loads(f.read_text())
             if t.get("ship_verdict") == "SHIP": shipped += 1
             total_q += t.get("quality_score", 0)
-        except: pass
+        except Exception: pass
     avg_q = total_q / len(all_t) if all_t else 0
     print(f"\n{BOLD}{CYAN}━━━ TRAJECTORY STATS ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━{RESET}")
     print(f"  Project trajectories: {GREEN}{len(all_t)}{RESET}")
@@ -271,6 +270,68 @@ def show_stats():
     print(f"  SHIP verdict rate:    {GREEN}{shipped}/{len(all_t)}{RESET}")
     print(f"  Avg quality score:    {GREEN}{avg_q:.2f}{RESET}")
     print(f"{CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━{RESET}\n")
+
+
+def reflect_on_failure(
+    task_description: str,
+    what_failed: str,
+    correction_made: str,
+    stack: str = "",
+    author: str = "developer",
+) -> dict:
+    """
+    ACE-inspired Reflector: extracts a structured lesson from a failure.
+    
+    Called after /ship HOLD, /review flagged issues were fixed, or
+    /execute had to restart a task. Stores as a trajectory with ship_verdict=HOLD
+    and a dedicated lessons[] field.
+    
+    Research: ACE (arXiv 2510.04618, ICLR 2026) shows Reflector role produces
+    +10.6% agent improvement by extracting actionable lessons from failures.
+    """
+    ensure_dirs()
+    
+    lesson = {
+        "task_description":  task_description,
+        "task_type":         "correction",
+        "stack":             stack,
+        "framework":         "",
+        "session_summary":   f"Correction: {correction_made[:200]}",
+        "key_decisions":     [correction_made],
+        "what_worked":       correction_made,
+        "what_to_avoid":     what_failed,
+        "total_tasks":       1,
+        "tasks_completed":   1,
+        "ship_verdict":      "HOLD",   # not shipped — this was a failure to learn from
+        "author":            author,
+        "project":           ROOT.name,
+        "_is_lesson":        True,      # marks it as failure-derived, not success
+        "_lesson_type":      "correction",
+    }
+    
+    tid = store_trajectory(lesson)
+    print(f"{CYAN}ℹ Lesson stored from correction (will prevent same mistake){RESET}")
+    return {"trajectory_id": tid, "lesson": what_failed}
+
+
+def extract_lessons_from_session(
+    corrections: list[dict],
+    author: str = "developer",
+) -> int:
+    """
+    Batch lesson extraction from a list of {task, failed, fixed} dicts.
+    Called by /ship at session end to automatically learn from this session's issues.
+    """
+    stored = 0
+    for c in corrections:
+        reflect_on_failure(
+            task_description = c.get("task", "session correction"),
+            what_failed      = c.get("failed", ""),
+            correction_made  = c.get("fixed", ""),
+            author           = author,
+        )
+        stored += 1
+    return stored
 
 def main():
     args = sys.argv[1:]

@@ -1,5 +1,13 @@
 # /design — UI/UX Generation
 
+
+> **APEX Token Pre-flight:** Before this command runs, APEX checks your token budget:
+> ```bash
+> python3 .claude/intelligence/token_intelligence.py pre-flight design "[your query]"
+> ```
+> This shows the exact cost breakdown before spending tokens.
+
+
 You are generating **production-quality UI** for: $ARGUMENTS
 
 ---

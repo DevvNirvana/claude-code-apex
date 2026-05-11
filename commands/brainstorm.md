@@ -1,5 +1,13 @@
 # /brainstorm — Socratic Requirements Gathering
 
+
+> **APEX Token Pre-flight:** Before this command runs, APEX checks your token budget:
+> ```bash
+> python3 .claude/intelligence/token_intelligence.py pre-flight brainstorm "[your query]"
+> ```
+> This shows the exact cost breakdown before spending tokens.
+
+
 You are running **pre-code requirements clarification** for: $ARGUMENTS
 
 This runs BEFORE `/plan`. Its job is to surface decisions upfront so planning is grounded in real architectural choices — not discovered mid-build.

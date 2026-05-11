@@ -80,7 +80,7 @@ def _atomic_write_json(path: Path, data):
         os.replace(tmp, path)
     except Exception:
         try: os.unlink(tmp)
-        except: pass
+        except Exception: pass
         raise
 
 
@@ -426,6 +426,102 @@ def promote_to_global(fact_id: str):
     else:
         print(f"{DIM}Fact already in global store{RESET}")
 
+
+
+def brain_read_selective(
+    query: str,
+    command: str = "general",
+    token_budget: int = BRAIN_TOKEN_BUDGET,
+) -> list[dict]:
+    """
+    Selective brain read — only loads context when it will meaningfully change output.
+
+    Research insight (ETH Zurich 2602.11988): injecting context for simple tasks
+    increases cost by 20%+ without improving outcomes. Context helps most for:
+    - planning, design, review, execute (complex, project-specific)
+    Not needed for:
+    - ask (read-only, simple questions)
+    - quick debug (usually file-specific, not architecture-wide)
+
+    Args:
+        command: the APEX command being run (affects injection threshold)
+    """
+    # Commands that always benefit from full brain context
+    CONTEXT_HEAVY = {"plan", "execute", "review", "design", "brainstorm", "spawn", "ship"}
+    # Commands that benefit from constraints only (not patterns/decisions)
+    CONSTRAINTS_ONLY = {"debug", "optimize", "refactor", "test"}
+    # Commands where brain adds little value — skip unless very high relevance
+    LIGHTWEIGHT = {"ask", "docs", "compact", "benchmark", "status"}
+
+    if command in LIGHTWEIGHT:
+        # Only inject if relevance is very high (direct question about constraints)
+        facts = brain_read(query, category="constraint", token_budget=200)
+        return [f for f in facts if f.get("_relevance", 0) > 0.5]
+
+    elif command in CONSTRAINTS_ONLY:
+        # Constraints only, no patterns or decisions
+        return brain_read(query, category="constraint", token_budget=400)
+
+    else:
+        # Full context for complex commands
+        return brain_read(query, token_budget=token_budget)
+
+
+
+def brain_reinforce(fact_id: str, outcome: str = "helpful"):
+    """
+    ACE grow-and-refine: increment helpful/harmful counter on a fact.
+    
+    Over time, facts with high helpful counts get higher confidence automatically.
+    Facts with high harmful counts get flagged for review.
+    
+    outcome: "helpful" | "harmful"
+    """
+    if not FACTS_FILE.exists():
+        return
+    facts = load_all_facts()
+    updated = []
+    for f in facts:
+        if f["id"] == fact_id and not f.get("invalidated_at"):
+            if outcome == "helpful":
+                f["_helpful_count"] = f.get("_helpful_count", 0) + 1
+                # Auto-increase confidence up to 1.0
+                f["confidence"] = min(1.0, f.get("confidence", 0.8) + 0.02)
+            elif outcome == "harmful":
+                f["_harmful_count"] = f.get("_harmful_count", 0) + 1
+                # Auto-decrease confidence
+                f["confidence"] = max(0.1, f.get("confidence", 0.8) - 0.05)
+                if f.get("_harmful_count", 0) >= 3:
+                    f["_needs_review"] = True
+        updated.append(f)
+    
+    content = "\n".join(json.dumps(f) for f in updated) + "\n"
+    fd, tmp_path = tempfile.mkstemp(dir=FACTS_FILE.parent, suffix=".tmp")
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as fp:
+            fp.write(content)
+        os.replace(tmp_path, FACTS_FILE)
+    except Exception:
+        try: os.unlink(tmp_path)
+        except OSError: pass
+        raise
+
+
+def brain_get_stale_facts(days: int = 30) -> list[dict]:
+    """Return valid facts not reinforced in the last N days."""
+    from datetime import datetime, timezone, timedelta
+    cutoff = datetime.now(timezone.utc) - timedelta(days=days)
+    stale = []
+    for f in load_valid_facts():
+        created = f.get("created_at", "")
+        if created:
+            try:
+                dt = datetime.fromisoformat(created)
+                if dt < cutoff and f.get("_helpful_count", 0) == 0:
+                    stale.append(f)
+            except Exception:
+                pass
+    return stale
 
 def main():
     args = sys.argv[1:]

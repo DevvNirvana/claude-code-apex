@@ -50,7 +50,7 @@ SYNONYMS = {
     "signup": "register", "logout": "signout",
     # UI domain
     "ui": "frontend", "interface": "frontend", "view": "frontend",
-    "screen": "page", "route": "page",
+    "screen": "page",
     "component": "widget", "element": "widget",
     # Data domain
     "db": "database", "data": "database", "storage": "database",

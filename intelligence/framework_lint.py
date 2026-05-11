@@ -154,7 +154,7 @@ def main():
                     frameworks = stack.get("guidelines", ["react"])
                     print(f"  Auto-detected: {frameworks}\n")
                     break
-        except:
+        except Exception:
             frameworks = ["react", "general"]
     else:
         frameworks = ["react", "general"]

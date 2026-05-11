@@ -7,6 +7,28 @@ You are initializing the APEX orchestrator for this project.
 
 ---
 
+## Step 0: Crash Recovery Check
+
+Before anything else — detect if the last session crashed:
+
+```bash
+python3 .claude/intelligence/crash_guard.py detect
+```
+
+If a crash is detected, APEX surfaces exactly where you were: the command running, 
+git state, files in flight, in-progress tasks. You can then decide to resume or start fresh.
+No crash detected → proceed to Step 1.
+
+
+## Step 0b: Identity
+
+```bash
+python3 .claude/intelligence/apex_identity.py banner
+```
+
+If no identity configured yet, this shows the default APEX banner.
+To personalize: `python3 .claude/intelligence/apex_identity.py setup`
+
 ## Step 1: Detect & Save Stack Profile
 
 ```bash
