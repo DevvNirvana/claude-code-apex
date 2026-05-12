@@ -44,6 +44,7 @@ ID_FILE  = APEX_DIR / "identity.json"
 
 # Color codes
 COLORS = {
+    "jarvis":  "\033[0;36m",
     "cyan":    "\033[0;36m",
     "green":   "\033[0;32m",
     "yellow":  "\033[1;33m",
@@ -64,7 +65,7 @@ PRESETS = {
         "tagline":       "Just A Rather Very Intelligent System",
         "personality":   "precise, highly technical, witty but formal",
         "greeting":      "Systems are online. Ready for you, sir.",
-        "color_scheme":  "cyan",
+        "color_scheme":  "jarvis",
         "theme_speed":   "hyper",
         "theme_spinner": "tech",
     },
@@ -118,6 +119,14 @@ DEFAULT_IDENTITY = {
     "theme_spinner":  "tech",
     "version_prefix": "v",
     "_version":       "6.0.0",
+    "voice": {
+        "enabled":         False,
+        "engine":          "auto",   # "auto" | "kokoro" | "f5"
+        "speed":           1.0,
+        "volume":          1.0,
+        "speak_greeting":  True,
+        "speak_responses": False,
+    },
 }
 
 # ── Animation Engines ─────────────────────────────────────────────────────────
@@ -173,7 +182,11 @@ def get_identity() -> dict:
     if ID_FILE.exists():
         try:
             data = json.loads(ID_FILE.read_text(errors="ignore"))
-            return {**DEFAULT_IDENTITY, **data}
+            merged = {**DEFAULT_IDENTITY, **data}
+            # Deep-merge voice sub-dict so partial stored configs keep default keys
+            if "voice" in data:
+                merged["voice"] = {**DEFAULT_IDENTITY["voice"], **data["voice"]}
+            return merged
         except Exception:
             pass
     return DEFAULT_IDENTITY.copy()
@@ -263,6 +276,16 @@ def print_startup_banner(version: str = None, skip_animation: bool = False):
 
     print(f"{c}{BOLD}╚{'═' * w}╝{RESET}\n")
 
+    # Speak greeting asynchronously — never blocks banner rendering
+    try:
+        _v = Path(__file__).parent
+        if str(_v) not in sys.path:
+            sys.path.insert(0, str(_v))
+        from apex_voice import speak_greeting
+        speak_greeting(ident)
+    except Exception:
+        pass
+
 
 def get_claude_md_identity_line() -> str:
     """Returns the identity line for injection at the top of CLAUDE.md."""
@@ -276,6 +299,59 @@ def get_claude_md_identity_line() -> str:
         f"# Identity: {pers}\n"
         f"# Context: You are {name}. Act accordingly.\n\n"
     )
+
+
+# ── Spinner verb presets (persona-matched) ────────────────────────────────────
+
+_SPINNER_VERBS: dict[str, list[str]] = {
+    "jarvis":    ["Calibrating",  "Scanning",      "Rendering",     "Compiling",     "Analyzing"    ],
+    "samantha":  ["Reading",      "Thinking",      "Intuiting",     "Exploring",     "Reflecting"   ],
+    "alfred":    ["Preparing",    "Reviewing",     "Assessing",     "Arranging",     "Attending"    ],
+    "hal":       ["Monitoring",   "Diagnosing",    "Predicting",    "Computing",     "Determining"  ],
+    "mother":    ["ACCESSING",    "DECRYPTING",    "ROUTING",       "PROCESSING",    "TRANSMITTING" ],
+    "default":   ["Analyzing",    "Structuring",   "Reasoning",     "Synthesizing",  "Processing"   ],
+}
+
+
+_VERB_MATCHERS: list[tuple[str, str]] = [
+    ("jarvis",   "jarvis"),
+    ("samantha", "samantha"),
+    ("alfred",   "alfred"),
+    ("hal",      "hal"),
+    ("mother",   "mother"),    # PRESETS["mother"] key
+    ("mu-th-ur", "mother"),   # MU-TH-UR 6000 name form
+    ("muthur",   "mother"),   # normalized form
+]
+
+
+def get_spinner_verbs(identity: dict | None = None) -> list[str]:
+    """Return persona-matched spinner verbs for settings.json spinnerVerbs."""
+    ident = identity or get_identity()
+    name  = ident.get("name", "APEX").lower().replace(".", "")
+    for pattern, verb_key in _VERB_MATCHERS:
+        if pattern in name:
+            return _SPINNER_VERBS.get(verb_key, _SPINNER_VERBS["default"])
+    return _SPINNER_VERBS["default"]
+
+
+def apply_theme(identity: dict | None = None) -> str:
+    """
+    Install persona-matched theme to ~/.claude/themes/ and activate it.
+    Called after identity setup or when color_scheme changes.
+    Returns theme slug on success, "" on failure.
+    """
+    try:
+        _intel = Path(__file__).parent
+        if str(_intel) not in sys.path:
+            sys.path.insert(0, str(_intel))
+        from theme_generator import install_all_presets, install_theme, apply_theme_preference, get_slug_for_scheme
+        install_all_presets()
+        ident  = identity or get_identity()
+        slug   = install_theme(ident)
+        apply_theme_preference(slug)
+        return slug
+    except Exception:
+        return ""
 
 
 def save_identity(updates: dict):
@@ -318,7 +394,7 @@ def interactive_setup():
         ("tagline",      "Tagline (short description)",                    current["tagline"]),
         ("greeting",     "Greeting phrase",                                current["greeting"]),
         ("owner_name",   "How APEX addresses you",                         current["owner_name"]),
-        ("color_scheme", "Color (cyan/green/yellow/magenta/white/red)",    current["color_scheme"]),
+        ("color_scheme", "Color (jarvis/cyan/blue/green/yellow/magenta/white/red)", current["color_scheme"]),
     ]
 
     updates = {}
@@ -333,7 +409,18 @@ def interactive_setup():
     save_identity(updates)
     c = COLORS.get(updates.get("color_scheme", "cyan"), COLORS["cyan"])
     print(f"\n{c}{BOLD}✓ Identity saved as '{updates['name']}'{RESET}\n")
+    slug = apply_theme(get_identity())
+    if slug:
+        print(f"{c}✓ Theme installed: {slug} — select via /theme in Claude Code{RESET}\n")
     print_startup_banner(skip_animation=True)
+
+    # Optional voice setup
+    try:
+        from apex_voice import setup_voice
+        if input("\nConfigure voice? [BETA] (y/N): ").strip().lower() == "y":
+            setup_voice()
+    except Exception:
+        pass
 
 
 def main():
@@ -362,6 +449,10 @@ def main():
             sys.exit(1)
         save_identity({args[1]: args[2]})
         print(f"✓ Set {args[1]} = {args[2]}")
+        if args[1] == "color_scheme":
+            slug = apply_theme()
+            if slug:
+                print(f"✓ Theme updated: {slug}")
 
     elif cmd == "banner":
         print_startup_banner()

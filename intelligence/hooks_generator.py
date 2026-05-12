@@ -164,14 +164,49 @@ exit 0
 
 def build_session_end_script() -> str:
     return r"""#!/usr/bin/env bash
-# APEX Stop Hook — session-end reminder for documentation hygiene
+# APEX Stop Hook — Auto Brain Sync + Code Index Rebuild + Session Summary
+#
+# Fires on every Stop event (session end, /compact, exit).
+# Two background jobs run silently — never blocks Claude Code shutdown.
+#
+# Jobs:
+#   1. brain_sync     — updates project_brain.json from CLAUDE.md (semantic memory)
+#   2. code_index     — rebuilds symbol index from source files (code RAG)
+#   3. turn counter   — resets session_turns.txt for next session
+# Then prints a brief session-close reminder (docs hygiene).
+
+# ── Silent background sync (non-blocking) ─────────────────────────────────────
+if command -v python3 >/dev/null 2>&1; then
+  # Brain sync: runs only if CLAUDE.md exists and has changed
+  python3 .claude/intelligence/project_brain.py sync >/dev/null 2>&1 &
+  BRAIN_PID=$!
+
+  # Code index rebuild: scans project files for updated symbol map
+  python3 .claude/intelligence/code_index.py build >/dev/null 2>&1 &
+  INDEX_PID=$!
+
+  # Wait max 4 seconds for both (they're fast — typically <0.5s each)
+  for pid in $BRAIN_PID $INDEX_PID; do
+    ( sleep 4 && kill $pid 2>/dev/null ) &
+    wait $pid 2>/dev/null
+  done
+fi
+
+# ── Reset context pressure counter ────────────────────────────────────────────
+echo "0" > ".claude/logs/session_turns.txt" 2>/dev/null || true
+
+# ── Session close reminder ─────────────────────────────────────────────────────
 echo ""
-echo "--- APEX: Session complete ---"
-echo "Before closing, spend 2 minutes:"
-echo "  1. Update TODO.md: mark [x] done, add discovered tasks"
-echo "  2. Add entry to docs/SESSION_LOG.md"
-echo "  3. If something shipped: python3 .claude/intelligence/trajectory_store.py store <file>"
+echo "━━━ APEX: Session complete ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
+echo "  Brain sync + code index rebuilt in background."
+echo ""
+echo "  Before closing, spend 2 minutes:"
+echo "  1. Update TODO.md — mark [x] done, add discovered tasks"
+echo "  2. If something shipped, store the trajectory:"
+echo "     python3 .claude/intelligence/trajectory_store.py store <session-notes>"
+echo ""
+
 exit 0
 """
 
@@ -239,6 +274,44 @@ def generate_settings(profile: dict) -> dict:
             }
         ]
 
+    # Status line — live cost + context visibility after every response
+    settings["statusLine"] = {
+        "type":    "command",
+        "command": f"bash {h}/apex-statusline.sh",
+    }
+
+    # Spinner verbs — persona-matched, replaces vanilla "Thinking..."
+    verbs = ["Analyzing", "Processing", "Reasoning", "Synthesizing", "Evaluating"]
+    try:
+        _intel = Path(__file__).parent
+        if str(_intel) not in sys.path:
+            sys.path.insert(0, str(_intel))
+        from apex_identity import get_spinner_verbs, get_identity
+        verbs = get_spinner_verbs(get_identity())
+    except Exception:
+        pass
+    settings["spinnerVerbs"] = {"mode": "replace", "verbs": verbs}
+
+    # Stop hook for response narration — only when user has opted into speak_responses
+    try:
+        from apex_identity import get_identity as _gi
+        _voice = _gi().get("voice", {})
+        if _voice.get("enabled") and _voice.get("speak_responses"):
+            settings["hooks"].setdefault("Stop", []).append({
+                "hooks": [{"type": "command", "command": "bash .claude/hooks/apex-voice.sh"}]
+            })
+    except Exception:
+        pass
+
+    # Cache identity name for apex-statusline.sh (avoids JSON parse on every turn)
+    try:
+        from apex_identity import get_name
+        name_cache = ROOT / ".claude" / "cache" / "statusline-name.txt"
+        name_cache.parent.mkdir(parents=True, exist_ok=True)
+        name_cache.write_text(get_name(), encoding="utf-8")
+    except Exception:
+        pass
+
     return settings
 
 
@@ -287,28 +360,91 @@ exit 0
 """
 
 
+def build_inject_reference_script() -> str:
+    return r"""#!/usr/bin/env bash
+# APEX UserPromptSubmit Hook — Reference Injection + Cognitive Memory
+#
+# Two jobs per prompt:
+#   1. Lazy reference doc injection  — keyword-triggered, zero tokens if no match
+#   2. Cognitive memory injection    — brain facts + trajectories + code index
+#      via context_engine.py (APEX Brain OS core)
+
+PROMPT="${1:-}"
+REFS=".claude/references"
+
+[ -z "$PROMPT" ] && exit 0
+
+PROMPT_LOWER=$(echo "$PROMPT" | tr '[:upper:]' '[:lower:]')
+REF_INJECTED=0
+
+# inject_ref() does NOT exit after injecting — falls through to brain context.
+inject_ref() {
+  local file="$REFS/$1"
+  [ "$REF_INJECTED" -eq 1 ] && return
+  if [ -f "$file" ]; then
+    cat "$file"
+    REF_INJECTED=1
+  fi
+}
+
+# Framework-specific
+echo "$PROMPT_LOWER" | grep -qE 'next\.?js|app router|server component|server action|route handler' && inject_ref "nextjs-guidelines.md"
+echo "$PROMPT_LOWER" | grep -qE 'react|component|hook|usestate|useeffect|jsx|tsx' && inject_ref "react-guidelines.md"
+echo "$PROMPT_LOWER" | grep -qE 'vue|nuxt|svelte|sveltekit|astro' && inject_ref "vue-svelte-guidelines.md"
+echo "$PROMPT_LOWER" | grep -qE '\bdjango\b|django orm|django view|django model' && inject_ref "django-patterns.md"
+echo "$PROMPT_LOWER" | grep -qE '\brails\b|activerecord|active record|ruby on rails' && inject_ref "rails-guidelines.md"
+echo "$PROMPT_LOWER" | grep -qE 'fastapi|pydantic|async def|fastapi route' && inject_ref "fastapi-patterns.md"
+echo "$PROMPT_LOWER" | grep -qE '\bgo\b|golang|goroutine|go module|gin |echo |fiber ' && inject_ref "go-guidelines.md"
+echo "$PROMPT_LOWER" | grep -qE 'react native|flutter|swiftui|ios|android|mobile' && inject_ref "native-guidelines.md"
+
+# Domain-specific
+echo "$PROMPT_LOWER" | grep -qE 'sql|postgres|mysql|supabase|query|database|orm|prisma|drizzle|migration' && inject_ref "sql-patterns.md"
+echo "$PROMPT_LOWER" | grep -qE 'tailwind|shadcn|ui component|css|styling|design system|token|variant' && inject_ref "shadcn-tailwind-guidelines.md"
+echo "$PROMPT_LOWER" | grep -qE 'test|spec|jest|pytest|vitest|cypress|playwright|coverage|tdd|unit test' && inject_ref "testing-patterns.md"
+echo "$PROMPT_LOWER" | grep -qE 'security|auth|permission|rls|jwt|token|csrf|injection|xss|secret|credential' && inject_ref "security-checklist.md"
+echo "$PROMPT_LOWER" | grep -qE 'api|rest|endpoint|route|openapi|swagger|graphql|grpc|webhook' && inject_ref "api-design.md"
+echo "$PROMPT_LOWER" | grep -qE 'mcp|model context protocol|tool|server|claude tool' && inject_ref "mcp-guide.md"
+echo "$PROMPT_LOWER" | grep -qE 'chart|graph|icon|svg|visualization|d3|recharts|chart\.js' && inject_ref "charts-icons-reference.md"
+echo "$PROMPT_LOWER" | grep -qE 'page layout|landing|hero|card|grid|flex|responsive|mobile first' && inject_ref "page-patterns.md"
+echo "$PROMPT_LOWER" | grep -qE 'ux|user experience|accessibility|a11y|wcag|aria|usability' && inject_ref "ux-principles.md"
+echo "$PROMPT_LOWER" | grep -qE 'inspiration|animation|motion|framer|gsap|aesthetic|dark neon|glassmorphism' && inject_ref "inspiration.md"
+echo "$PROMPT_LOWER" | grep -qE 'agent|multi.agent|worktree|spawn|parallel|orchestrat' && inject_ref "agent-protocol.md"
+echo "$PROMPT_LOWER" | grep -qE 'python|pip|virtualenv|async python|type hint' && inject_ref "python-guidelines.md"
+echo "$PROMPT_LOWER" | grep -qE 'typescript|type error|interface|type alias|generics|zod|ts config' && inject_ref "react-guidelines.md"
+echo "$PROMPT_LOWER" | grep -qE 'debug|error|crash|bug|fix|broken|not working|issue|stack trace' && inject_ref "troubleshooting.md"
+
+# Cognitive Memory injection (APEX Brain OS)
+if command -v python3 >/dev/null 2>&1; then
+  BRAIN_CTX=$(echo "$PROMPT" | python3 .claude/intelligence/context_engine.py 2>/dev/null)
+  [ -n "$BRAIN_CTX" ] && echo "$BRAIN_CTX"
+fi
+
+exit 0
+"""
+
+
 def build_session_pollution_script() -> str:
     """
-    UserPromptSubmit hook: warns when session turns exceed safe threshold.
-    Research: quality drops sharply past ~15 turns in complex sessions.
+    UserPromptSubmit hook: context pressure check via context_guard.py.
+    Measures turns + tokens + CLAUDE.md size → warns at 50%+, recites at 70%+.
     """
     return r"""#!/usr/bin/env bash
-# APEX UserPromptSubmit Hook — Session Pollution Detection
+# APEX UserPromptSubmit Hook — Context Pressure Detection
+# Delegates to context_guard.py (three-signal pressure measurement).
 TURNS_FILE=".claude/logs/session_turns.txt"
 mkdir -p ".claude/logs" 2>/dev/null
 TURNS=$(cat "$TURNS_FILE" 2>/dev/null || echo "0")
 TURNS=$((TURNS + 1))
 echo "$TURNS" > "$TURNS_FILE"
-if [ "$TURNS" -eq 15 ]; then
-    echo ""
-    echo "⚠ APEX: Session at turn 15. Context may be getting polluted."
-    echo "  Consider /compact or /handoff before starting a new task."
-    echo ""
-elif [ "$TURNS" -ge 25 ] && [ $((TURNS % 5)) -eq 0 ]; then
-    echo ""
-    echo "🔴 APEX: Session at turn $TURNS. Start fresh for best results."
-    echo "  Run /handoff to preserve context, then open a new session."
-    echo ""
+if command -v python3 >/dev/null 2>&1; then
+  GUARD_OUT=$(python3 .claude/intelligence/context_guard.py check 2>/dev/null)
+  [ -n "$GUARD_OUT" ] && echo "$GUARD_OUT"
+else
+  if [ "$TURNS" -eq 15 ]; then
+    echo ""; echo "⚠ APEX: Session at turn 15. Consider /compact."; echo ""
+  elif [ "$TURNS" -eq 25 ]; then
+    echo ""; echo "⛔ APEX: Session at turn 25. Run /handoff + fresh session."; echo ""
+  fi
 fi
 exit 0
 """
@@ -356,12 +492,13 @@ def main():
     # ── Write hook scripts ──
     HOOKS_DIR.mkdir(parents=True, exist_ok=True)
     scripts = {
-        "session-start.sh":    build_session_start_script(constraints),
-        "check-secrets.sh":    build_secrets_script(),
-        "protect-main.sh":     build_protect_main_script(),
-        "session-end.sh":      build_session_end_script(),
+        "session-start.sh":     build_session_start_script(constraints),
+        "inject-reference.sh":  build_inject_reference_script(),
+        "check-secrets.sh":     build_secrets_script(),
+        "protect-main.sh":      build_protect_main_script(),
+        "session-end.sh":       build_session_end_script(),
         "session-pollution.sh": build_session_pollution_script(),
-        "crash-checkpoint.sh": build_crash_checkpoint_script(),
+        "crash-checkpoint.sh":  build_crash_checkpoint_script(),
     }
     if lint:
         scripts["run-lint.sh"] = build_lint_script(lint)

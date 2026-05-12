@@ -23,7 +23,7 @@ DEST=".claude"
 
 echo ""
 echo -e "${BOLD}${CYAN}╔══════════════════════════════════════════════════════╗${RESET}"
-echo -e "${BOLD}${CYAN}║   APEX — AI Engineering OS  v6.0.0                   ║${RESET}"
+echo -e "${BOLD}${CYAN}║   APEX — AI Engineering OS  v7.0.0                   ║${RESET}"
 echo -e "${BOLD}${CYAN}╚══════════════════════════════════════════════════════╝${RESET}"
 echo ""
 echo -e "${DIM}  Source: $PKG_DIR${RESET}"
@@ -66,15 +66,24 @@ for cmd in init setup status ask brainstorm plan execute design spawn test \
   install_file "$PKG_DIR/commands/$cmd.md" "$DEST/commands/$cmd.md"
 done
 
-# Intelligence (10 modules)
-echo ""; echo -e "${BOLD}Intelligence (10 modules)...${RESET}"
+# Intelligence (25 modules)
+echo ""; echo -e "${BOLD}Intelligence (26 modules)...${RESET}"
 for mod in cache_manager detect_stack token_tracker trajectory_store \
            taste_memory project_brain evaluator benchmark \
            design_system framework_lint generate_claude_md \
            hooks_generator claude_md_optimizer skills_manager \
-           token_intelligence smart_router crash_guard apex_identity update_checker; do
+           token_intelligence smart_router crash_guard apex_identity update_checker \
+           context_engine code_index context_guard theme_generator apex_statusline \
+           apex_voice; do
   install_file "$PKG_DIR/intelligence/$mod.py" "$DEST/intelligence/$mod.py"
 done
+
+# Build code index after installing intelligence modules
+echo ""; echo -e "${BOLD}Building code index...${RESET}"
+if ! $DRY_RUN && command -v python3 >/dev/null 2>&1; then
+  python3 "$DEST/intelligence/code_index.py" build 2>/dev/null || \
+    echo -e "  ${DIM}(code index build skipped)${RESET}"
+else echo -e "  ${DIM}(skipped)${RESET}"; fi
 
 if ! $UPDATE_ONLY; then
   # References (23 docs)
@@ -113,7 +122,8 @@ if ! $UPDATE_ONLY; then
   if ! $DRY_RUN; then
     mkdir -p "$DEST/config" "$DEST/cache/plans" "$DEST/cache/responses" \
              "$DEST/logs" "$DEST/brain" "$DEST/memory/trajectories" \
-             "$DEST/memory/benchmarks" "$DEST/worktrees-meta" "worktrees" "docs"
+             "$DEST/memory/benchmarks" "$DEST/worktrees-meta" "$DEST/voices" \
+             "worktrees" "docs"
   fi
 fi
 
@@ -127,10 +137,12 @@ else echo -e "  ${DIM}(skipped)${RESET}"; fi
 echo ""; echo -e "${BOLD}Installing hook templates...${RESET}"
 if ! $DRY_RUN; then
   mkdir -p "$DEST/hooks"
-  cp "$PKG_DIR/templates/hooks/inject-reference.sh" "$DEST/hooks/inject-reference.sh" 2>/dev/null && \
-    chmod +x "$DEST/hooks/inject-reference.sh" && \
-    echo -e "  ${GREEN}✓ inject-reference.sh (UserPromptSubmit lazy loader)${RESET}" || \
-    echo -e "  ${DIM}(inject-reference hook not found)${RESET}"
+  for hook in inject-reference.sh session-pollution.sh session-end.sh apex-statusline.sh apex-voice.sh; do
+    cp "$PKG_DIR/templates/hooks/$hook" "$DEST/hooks/$hook" 2>/dev/null && \
+      chmod +x "$DEST/hooks/$hook" && \
+      echo -e "  ${GREEN}✓ $hook${RESET}" || \
+      echo -e "  ${DIM}($hook not found — skipped)${RESET}"
+  done
 fi
 
 # Identity setup (fresh install only)
@@ -142,6 +154,13 @@ if ! $UPDATE_ONLY && ! $DRY_RUN; then
     python3 "$DEST/intelligence/apex_identity.py" banner 2>/dev/null || true
   fi
 fi
+
+# Theme install (writes all preset themes to ~/.claude/themes/)
+echo ""; echo -e "${BOLD}Installing APEX themes...${RESET}"
+if ! $DRY_RUN && command -v python3 >/dev/null 2>&1; then
+  python3 "$DEST/intelligence/theme_generator.py" install 2>/dev/null || \
+    echo -e "  ${DIM}(theme install skipped)${RESET}"
+else echo -e "  ${DIM}(skipped)${RESET}"; fi
 
 # Stack detection
 echo ""; echo -e "${BOLD}Stack detection...${RESET}"
