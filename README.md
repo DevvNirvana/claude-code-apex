@@ -1,6 +1,6 @@
 <div align="center">
 
-# APEX — AI Engineering OS
+# APEX: AI Engineering OS
 
 **The most advanced Claude Code engineering framework. Production-grade. Research-backed. Self-improving.**
 
@@ -17,7 +17,7 @@
 
 ## What Is APEX?
 
-APEX transforms Claude Code from a chat interface into a structured engineering OS. It gives Claude persistent memory, self-enforcing rules, proactive intelligence, crash recovery, token-aware routing, a live terminal statusline, voice narration, and a cognitive context engine — without changing how you work.
+APEX transforms Claude Code from a chat interface into a structured engineering OS. It gives Claude persistent memory, self-enforcing rules, proactive intelligence, crash recovery, token-aware routing, a live terminal statusline, voice narration, and a cognitive context engine - without changing how you work.
 
 You still type commands. Claude still writes code. But now it **remembers** your project, **enforces** your standards, **warns** you before wasting tokens, **recovers** automatically if it crashes, and **speaks** your responses aloud if you want it to.
 
@@ -233,7 +233,7 @@ User: "where is the auth code?"
 
 User: /plan "build the user authentication system"
 → Smart Router: FULL tier (~5,500 tokens)
-→ Loads: Everything — CLAUDE.md, brain, trajectories, taste, skill body
+→ Loads: Everything: CLAUDE.md, brain, trajectories, taste, skill body
 → Cost: ~$0.017
 ```
 
@@ -282,7 +282,7 @@ python3 .claude/intelligence/apex_identity.py setup
 │   ├── session-end.sh          Archives session summary on stop
 │   ├── apex-statusline.sh      Live token/cost statusline (PostToolUse)
 │   └── apex-voice.sh           Response narration hook (Stop, BETA)
-├── brain/             facts.jsonl — persists across sessions
+├── brain/             facts.jsonl - persists across sessions
 │   └── sessions/      Archived session summaries (v7)
 ├── memory/            trajectories/, taste, evaluations
 ├── checkpoints/       Crash recovery state
@@ -298,7 +298,7 @@ python3 .claude/intelligence/apex_identity.py setup
 ## What Gets Preserved on Upgrade
 
 ```
-PRESERVED (your data — never touched):     REPLACED (system files — safe to overwrite):
+PRESERVED (your data - never touched):     REPLACED (system files - safe to overwrite):
   .claude/brain/facts.jsonl                  .claude/commands/
   .claude/brain/sessions/                    .claude/intelligence/
   .claude/memory/trajectories/               .claude/references/
@@ -331,54 +331,54 @@ PRESERVED (your data — never touched):     REPLACED (system files — safe to 
 
 ## Changelog
 
-### v7.0.0 — May 2026
-- **NEW:** Cognitive Memory — Context Engine, Code Index, Context Guard
-- **NEW:** Session Archive — end-of-session summaries persisted to `.claude/brain/sessions/`
-- **NEW:** Theme Engine — 8 lore-accurate Claude Code themes, custom hex theme creation
-- **NEW:** APEX Statusline — live token/cost/tool telemetry in terminal after every action
-- **NEW:** Voice Module (BETA) — Kokoro-82M local TTS + F5-TTS zero-shot cloning, persona-matched voices
-- **NEW:** Universe Presets — JARVIS, SAMANTHA, ALFRED, HAL, MU-TH-UR with matched colors/voices/spinners
-- **FIX:** `get_identity()` deep-merge bug — partial voice configs no longer wipe defaults
+### v7.0.0 - May 2026
+- **NEW:** Cognitive Memory - Context Engine, Code Index, Context Guard
+- **NEW:** Session Archive - end-of-session summaries persisted to `.claude/brain/sessions/`
+- **NEW:** Theme Engine - 8 lore-accurate Claude Code themes, custom hex theme creation
+- **NEW:** APEX Statusline - live token/cost/tool telemetry in terminal after every action
+- **NEW:** Voice Module (BETA) - Kokoro-82M local TTS + F5-TTS zero-shot cloning, persona-matched voices
+- **NEW:** Universe Presets - JARVIS, SAMANTHA, ALFRED, HAL, MU-TH-UR with matched colors/voices/spinners
+- **FIX:** `get_identity()` deep-merge bug - partial voice configs no longer wipe defaults
 - **FIX:** JARVIS theme now correctly applies cyan theme (was falling back to default dark)
 
-### v6.0.0 — May 10, 2026
-- **NEW:** Smart Router — 4-tier token classification. 56% average session reduction.
-- **NEW:** Crash Guard — atomic checkpoints, auto crash detection on `/init`.
-- **NEW:** APEX Identity — custom naming (JARVIS, ALFRED, NOVA, anything).
-- **NEW:** Auto-update checker — daily GitHub check, non-blocking, opt-in.
-- **NEW:** Budget enforcement — hard block before tokens are spent.
+### v6.0.0 - May 10, 2026
+- **NEW:** Smart Router - 4-tier token classification. 56% average session reduction.
+- **NEW:** Crash Guard - atomic checkpoints, auto crash detection on `/init`.
+- **NEW:** APEX Identity - custom naming (JARVIS, ALFRED, NOVA, anything).
+- **NEW:** Auto-update checker - daily GitHub check, non-blocking, opt-in.
+- **NEW:** Budget enforcement - hard block before tokens are spent.
 
-### v5.0.0 — April 2026
-- Skills lazy loading — 91% startup token reduction.
-- UserPromptSubmit hook — reference injection (30,364 → 2,000 tokens).
-- ACE Reflector — failure lessons auto-extracted.
-- Brain delta updates — confidence auto-adjusts from usage.
-- Session pollution detection — turn counter with warnings.
-- `/handoff` command — session context bridge.
+### v5.0.0 - April 2026
+- Skills lazy loading - 91% startup token reduction.
+- UserPromptSubmit hook - reference injection (30,364 → 2,000 tokens).
+- ACE Reflector - failure lessons auto-extracted.
+- Brain delta updates - confidence auto-adjusts from usage.
+- Session pollution detection - turn counter with warnings.
+- `/handoff` command - session context bridge.
 
-### v4.3.0 — March 2026
-- Hooks generator — brain constraints → enforcement hooks.
-- CLAUDE.md optimizer — removes arch trees, generic advice.
-- Selective brain injection — 3-tier context loading.
+### v4.3.0 - March 2026
+- Hooks generator - brain constraints → enforcement hooks.
+- CLAUDE.md optimizer - removes arch trees, generic advice.
+- Selective brain injection - 3-tier context loading.
 
-### v3.x — February 2026
-- Project Brain — persistent fact store.
-- Trajectory Store — experience replay.
-- Taste Memory — preference learning.
+### v3.x - February 2026
+- Project Brain - persistent fact store.
+- Trajectory Store - experience replay.
+- Taste Memory - preference learning.
 
-### v2.x — January 2026
-- Token Tracker — cost tracking and DORA metrics.
-- Evaluator — self-scoring quality engine.
-- Benchmark — statistical consistency.
+### v2.x - January 2026
+- Token Tracker - cost tracking and DORA metrics.
+- Evaluator - self-scoring quality engine.
+- Benchmark - statistical consistency.
 
-### v1.x — December 2025
+### v1.x - December 2025
 - Initial release. Commands, references, hooks skeleton.
 
 ---
 
 ## License
 
-MIT — Use it, fork it, build on it.
+MIT - Use it, fork it, build on it.
 
 ---
 
